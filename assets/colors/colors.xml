@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2D72C6</color>
+    <color name="secondary">#F57C22</color>
+    <color name="background">#FFFFFF</color>
+    <color name="backgroundSecondary">#F6F6F6</color>
+    <color name="cardBackground">#FFFFFF</color>
+    <color name="textPrimary">#1A1A1A</color>
+    <color name="textSecondary">#3A3A3A</color>
+    <color name="textInactive">#9F9F9F</color>
+    <color name="warning">#F57C22</color>
+    <color name="danger">#B5212E</color>
+    <color name="success">#3CB371</color>
+    <color name="borderSoft">#E2E2E2</color>
+    <color name="borderMedium">#CACACA</color>
+    <color name="dark_theme_primary">#2D72C6</color>
+    <color name="dark_theme_secondary">#F57C22</color>
+    <color name="dark_theme_background">#0C0C10</color>
+    <color name="dark_theme_backgroundSecondary">#13131A</color>
+    <color name="dark_theme_cardBackground">#1A1A22</color>
+    <color name="dark_theme_textPrimary">#FFFFFF</color>
+    <color name="dark_theme_textSecondary">#D7D7D7</color>
+    <color name="dark_theme_textInactive">#757575</color>
+    <color name="dark_theme_warning">#F57C22</color>
+    <color name="dark_theme_danger">#B5212E</color>
+    <color name="dark_theme_success">#45C77A</color>
+    <color name="dark_theme_borderSoft">#2A2A33</color>
+    <color name="dark_theme_borderMedium">#1C1C22</color>
+</resources>
