@@ -5,7 +5,8 @@ abstract class AuthRepository {
   Future<User> register({
     required String email,
     required String password,
-    required String companyName,
+    required String clientName,
+    required String clientEmail,
   });
   Future<void> logout();
 }

@@ -15,6 +15,12 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final user = await _repository.login(email: email, password: password);
       emit(AuthState.authenticated(user));
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        status: AuthStatus.failure,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      ));
+      emit(state.copyWith(status: AuthStatus.unauthenticated));
     } catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, errorMessage: 'Ошибка входа'));
       emit(state.copyWith(status: AuthStatus.unauthenticated));
@@ -24,16 +30,24 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> register({
     required String email,
     required String password,
-    required String companyName,
+    required String clientName,
+    required String clientEmail,
   }) async {
     emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
     try {
       final user = await _repository.register(
         email: email,
         password: password,
-        companyName: companyName,
+        clientName: clientName,
+        clientEmail: clientEmail,
       );
       emit(AuthState.authenticated(user));
+    } on Exception catch (e) {
+      emit(state.copyWith(
+        status: AuthStatus.failure,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      ));
+      emit(state.copyWith(status: AuthStatus.unauthenticated));
     } catch (e) {
       emit(state.copyWith(status: AuthStatus.failure, errorMessage: 'Ошибка регистрации'));
       emit(state.copyWith(status: AuthStatus.unauthenticated));

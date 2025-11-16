@@ -61,52 +61,64 @@ class AppHeader extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: IconWithLabel(
-              icon: Icons.shopping_cart_outlined,
-              label: 'Мои заказы',
-              onTap: () => context.goNamed('orders'),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: IconWithLabel(
-              icon: Icons.warehouse_outlined,
-              label: 'Остатки',
-              onTap: () => context.goNamed('stock'),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: IconWithLabel(
-              icon: Icons.history_outlined,
-              label: 'История',
-              onTap: () => context.goNamed('orders_history'),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: IconWithLabel(
-              icon: Icons.person_outline,
-              label: 'Профиль',
-              onTap: () {
-                final authState = context.read<AuthCubit>().state;
-                if (authState.status == AuthStatus.authenticated) {
-                  context.goNamed('profile');
-                } else {
-                  showDialog<void>(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (context) => const AuthDialog(),
-                  );
-                }
-              },
-            ),
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, authState) {
+              final isAuthenticated = authState.status == AuthStatus.authenticated;
+              
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isAuthenticated) ...[
+                    const SizedBox(width: 12),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: IconWithLabel(
+                        icon: Icons.shopping_cart_outlined,
+                        label: 'Мои заказы',
+                        onTap: () => context.goNamed('orders'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: IconWithLabel(
+                        icon: Icons.warehouse_outlined,
+                        label: 'Остатки',
+                        onTap: () => context.goNamed('stock'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: IconWithLabel(
+                        icon: Icons.history_outlined,
+                        label: 'История',
+                        onTap: () => context.goNamed('orders_history'),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(width: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: IconWithLabel(
+                      icon: Icons.person_outline,
+                      label: 'Профиль',
+                      onTap: () {
+                        if (authState.status == AuthStatus.authenticated) {
+                          context.goNamed('profile');
+                        } else {
+                          showDialog<void>(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) => const AuthDialog(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

@@ -19,6 +19,7 @@ class _AuthDialogState extends State<AuthDialog> {
   String _email = '';
   String _password = '';
   String _companyName = '';
+  String _clientEmail = '';
 
   bool _obscure = true;
   bool _obscureRepeat = true;
@@ -33,6 +34,15 @@ class _AuthDialogState extends State<AuthDialog> {
   void _toggleMode() {
     setState(() {
       _mode = _mode == _AuthMode.login ? _AuthMode.register : _AuthMode.login;
+      // Очищаем форму при переключении режима
+      _formKey.currentState?.reset();
+      // Очищаем поля
+      _email = '';
+      _password = '';
+      _companyName = '';
+      _clientEmail = '';
+      _passwordController.clear();
+      _passwordRepeatController.clear();
     });
   }
 
@@ -43,7 +53,12 @@ class _AuthDialogState extends State<AuthDialog> {
     if (_mode == _AuthMode.login) {
       auth.login(email: _email.trim(), password: _password);
     } else {
-      auth.register(email: _email.trim(), password: _password, companyName: _companyName.trim());
+      auth.register(
+        email: _email.trim(),
+        password: _password,
+        clientName: _companyName.trim(),
+        clientEmail: _clientEmail.trim(),
+      );
     }
   }
 
@@ -158,12 +173,35 @@ class _AuthDialogState extends State<AuthDialog> {
                               TextFormField(
                                 decoration: makeDecoration(),
                                 validator: (value) {
+                                  if (_mode != _AuthMode.register) return null;
                                   final v = (value ?? '').trim();
                                   if (v.isEmpty) return 'Введите название компании';
                                   if (v.length < 2) return 'Слишком короткое название';
                                   return null;
                                 },
                                 onSaved: (newValue) => _companyName = newValue ?? '',
+                                enabled: !isLoading,
+                              ),
+                              const SizedBox(height: 12),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Email компании',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              TextFormField(
+                                decoration: makeDecoration(),
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (_mode != _AuthMode.register) return null;
+                                  final v = (value ?? '').trim();
+                                  if (v.isEmpty) return 'Введите email компании';
+                                  if (!_emailRegExp.hasMatch(v)) return 'Некорректный email';
+                                  return null;
+                                },
+                                onSaved: (newValue) => _clientEmail = newValue ?? '',
                                 enabled: !isLoading,
                               ),
                               const SizedBox(height: 12),
@@ -232,6 +270,7 @@ class _AuthDialogState extends State<AuthDialog> {
                                 obscureText: _obscureRepeat,
                                 controller: _passwordRepeatController,
                                 validator: (value) {
+                                  if (_mode != _AuthMode.register) return null;
                                   final v = value ?? '';
                                   if (v.isEmpty) return 'Повторите пароль';
                                   if (v != _passwordController.text) return 'Пароли не совпадают';
