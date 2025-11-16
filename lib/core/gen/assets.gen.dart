@@ -106,3 +106,4 @@ class AssetGenImageAnimation {
   final int frames;
 }
 
+
