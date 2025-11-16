@@ -5,13 +5,8 @@ class StockPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Остатки на складе'),
-      ),
-      body: const Center(
-        child: Text('Здесь будут остатки товаров на складе'),
-      ),
+    return const Center(
+      child: Text('Здесь будут остатки товаров на складе'),
     );
   }
 }

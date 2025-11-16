@@ -1,36 +1,69 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/features/home/presentation/pages/home_page.dart';
+import 'package:prime_top_front/features/home/presentation/widgets/home_drawer.dart';
+import 'package:prime_top_front/core/widgets/app_header.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/my_orders_page.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/order_history_page.dart';
 import 'package:prime_top_front/features/profile/presentation/pages/client_profile_page.dart';
 import 'package:prime_top_front/features/stock/presentation/pages/stock_page.dart';
 
 final GoRouter appRouter = GoRouter(
-  routes: <GoRoute>[
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => const HomePage(),
-    ),
-    GoRoute(
-      path: '/orders',
-      name: 'orders',
-      builder: (context, state) => const MyOrdersPage(),
-    ),
-    GoRoute(
-      path: '/orders/history',
-      name: 'orders_history',
-      builder: (context, state) => const OrderHistoryPage(),
-    ),
-    GoRoute(
-      path: '/stock',
-      name: 'stock',
-      builder: (context, state) => const StockPage(),
-    ),
-    GoRoute(
-      path: '/profile',
-      name: 'profile',
-      builder: (context, state) => const ClientProfilePage(),
+  routes: <RouteBase>[
+    ShellRoute(
+      builder: (context, state, child) {
+        final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            toolbarHeight: 96,
+            titleSpacing: 8,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [ColorName.primary, ColorName.secondary],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+            ),
+            title: AppHeader(onOpenMenu: () => scaffoldKey.currentState?.openDrawer()),
+          ),
+          drawer: const HomeDrawer(),
+          body: child,
+        );
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          pageBuilder: (context, state) => const NoTransitionPage(child: HomePage()),
+        ),
+        GoRoute(
+          path: '/orders',
+          name: 'orders',
+          pageBuilder: (context, state) => const NoTransitionPage(child: MyOrdersPage()),
+        ),
+        GoRoute(
+          path: '/orders/history',
+          name: 'orders_history',
+          pageBuilder: (context, state) => const NoTransitionPage(child: OrderHistoryPage()),
+        ),
+        GoRoute(
+          path: '/stock',
+          name: 'stock',
+          pageBuilder: (context, state) => const NoTransitionPage(child: StockPage()),
+        ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          pageBuilder: (context, state) => const NoTransitionPage(child: ClientProfilePage()),
+        ),
+      ],
     ),
   ],
 );

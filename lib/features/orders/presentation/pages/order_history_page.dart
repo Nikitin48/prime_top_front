@@ -5,13 +5,8 @@ class OrderHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('История заказов'),
-      ),
-      body: const Center(
-        child: Text('Здесь будет история ваших заказов'),
-      ),
+    return const Center(
+      child: Text('Здесь будет история ваших заказов'),
     );
   }
 }

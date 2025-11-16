@@ -3,9 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:prime_top_front/core/gen/assets.gen.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/features/home/presentation/widgets/icon_with_label.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
+import 'package:prime_top_front/features/auth/presentation/widgets/auth_dialog.dart';
 
-class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key, required this.onOpenMenu});
+class AppHeader extends StatelessWidget {
+  const AppHeader({super.key, required this.onOpenMenu});
 
   final VoidCallback onOpenMenu;
 
@@ -15,7 +18,14 @@ class HomeHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
       child: Row(
         children: [
-          Assets.logo.logoPrimeTop.image(height: 65, fit: BoxFit.contain),
+          InkWell(
+            onTap: () => context.goNamed('home'),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Assets.logo.logoPrimeTop.image(height: 65, fit: BoxFit.contain),
+            ),
+          ),
           const SizedBox(width: 12),
           IconButton(
             icon: const Icon(Icons.menu),
@@ -84,7 +94,18 @@ class HomeHeader extends StatelessWidget {
             child: IconWithLabel(
               icon: Icons.person_outline,
               label: 'Профиль',
-              onTap: () => context.goNamed('profile'),
+              onTap: () {
+                final authState = context.read<AuthCubit>().state;
+                if (authState.status == AuthStatus.authenticated) {
+                  context.goNamed('profile');
+                } else {
+                  showDialog<void>(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (context) => const AuthDialog(),
+                  );
+                }
+              },
             ),
           ),
         ],

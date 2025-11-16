@@ -5,13 +5,8 @@ class ClientProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Профиль клиента'),
-      ),
-      body: const Center(
-        child: Text('Здесь будут данные профиля и настройки'),
-      ),
+    return const Center(
+      child: Text('Здесь будут данные профиля и настройки'),
     );
   }
 }
