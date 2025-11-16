@@ -4,6 +4,7 @@ import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/features/home/presentation/pages/home_page.dart';
 import 'package:prime_top_front/features/home/presentation/widgets/home_drawer.dart';
 import 'package:prime_top_front/core/widgets/app_header.dart';
+import 'package:prime_top_front/core/widgets/app_footer.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/my_orders_page.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/order_history_page.dart';
 import 'package:prime_top_front/features/profile/presentation/pages/client_profile_page.dart';
@@ -34,7 +35,18 @@ final GoRouter appRouter = GoRouter(
             title: AppHeader(onOpenMenu: () => scaffoldKey.currentState?.openDrawer()),
           ),
           drawer: const HomeDrawer(),
-          body: child,
+          bottomNavigationBar: const AppFooter(),
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: child,
+                ),
+              );
+            },
+          ),
         );
       },
       routes: <RouteBase>[
