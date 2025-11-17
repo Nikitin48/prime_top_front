@@ -27,10 +27,7 @@ class AppHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: onOpenMenu,
-          ),
+          _CatalogButton(onPressed: onOpenMenu),
           const SizedBox(width: 12),
           Expanded(
             child: Padding(
@@ -126,4 +123,40 @@ class AppHeader extends StatelessWidget {
   }
 }
 
+/// Стилизованная кнопка каталога
+class _CatalogButton extends StatefulWidget {
+  const _CatalogButton({required this.onPressed});
 
+  final VoidCallback onPressed;
+
+  @override
+  State<_CatalogButton> createState() => _CatalogButtonState();
+}
+
+class _CatalogButtonState extends State<_CatalogButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 150),
+            opacity: _isHovered ? 0.7 : 1.0,
+            child: const Icon(
+              Icons.menu,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
