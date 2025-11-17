@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/utils/ral_color_helper.dart';
+import 'package:prime_top_front/features/coating_types/application/cubit/menu_cubit.dart';
 import 'package:prime_top_front/features/products/application/cubit/products_cubit.dart';
 import 'package:prime_top_front/features/products/application/cubit/products_state.dart';
+import 'package:prime_top_front/features/products/domain/entities/product.dart';
 
 class ProductsColumn extends StatelessWidget {
   const ProductsColumn({super.key});
@@ -102,71 +105,15 @@ class ProductsColumn extends StatelessWidget {
                   itemBuilder: (context, index) {
               final product = state.products[index];
 
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? ColorName.darkThemeCardBackground
-                      : ColorName.cardBackground,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: isDark
-                        ? ColorName.darkThemeBorderSoft
-                        : ColorName.borderSoft,
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      margin: const EdgeInsets.only(right: 12, top: 2),
-                      decoration: BoxDecoration(
-                        color: RalColorHelper.getRalColor(product.colorCode),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: isDark
-                              ? ColorName.darkThemeBorderSoft
-                              : ColorName.borderSoft,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  product.name,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    color: isDark
-                                        ? ColorName.darkThemeTextPrimary
-                                        : ColorName.textPrimary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'RAL ${product.colorCode}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: isDark
-                                      ? ColorName.darkThemeTextSecondary
-                                      : ColorName.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+              return _ProductCard(
+                product: product,
+                isDark: isDark,
+                theme: theme,
+                onTap: () {
+                  // Закрываем меню при переходе на страницу продукта
+                  context.read<MenuCubit>().closeMenu();
+                  context.go('/products/${product.id}');
+                },
               );
             },
                 ),
@@ -187,6 +134,96 @@ class ProductsColumn extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _ProductCard extends StatefulWidget {
+  const _ProductCard({
+    required this.product,
+    required this.isDark,
+    required this.theme,
+    required this.onTap,
+  });
+
+  final Product product;
+  final bool isDark;
+  final ThemeData theme;
+  final VoidCallback onTap;
+
+  @override
+  State<_ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<_ProductCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final baseColor = widget.isDark
+        ? ColorName.darkThemeCardBackground
+        : ColorName.cardBackground;
+    
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? Color.lerp(baseColor, ColorName.primary, 0.05)
+                : baseColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: widget.isDark
+                  ? ColorName.darkThemeBorderSoft
+                  : ColorName.borderSoft,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  color: RalColorHelper.getRalColor(widget.product.colorCode),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: widget.isDark
+                        ? ColorName.darkThemeBorderSoft
+                        : ColorName.borderSoft,
+                    width: 1,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  widget.product.name,
+                  style: widget.theme.textTheme.titleMedium?.copyWith(
+                    color: widget.isDark
+                        ? ColorName.darkThemeTextPrimary
+                        : ColorName.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: widget.isDark
+                    ? ColorName.darkThemeTextSecondary
+                    : ColorName.textSecondary,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

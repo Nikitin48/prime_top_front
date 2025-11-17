@@ -1,0 +1,108 @@
+import 'package:prime_top_front/features/products/domain/entities/analyses.dart';
+
+class AnalysesModel extends Analyses {
+  const AnalysesModel({
+    super.bleskPri60Grad,
+    super.uslovnayaVyazkost,
+    super.deltaE,
+    super.deltaL,
+    super.deltaA,
+    super.deltaB,
+    super.colorDiffDeltaeD8,
+    super.vremyaSushki,
+    super.pikovayaTemperatura,
+    super.tolschinaDlyaGrunta,
+    super.adgeziya,
+    super.stoikostKRastvor,
+    super.kolvoVykrSPartii,
+    super.unnamed16,
+    super.stepenPeretira,
+    super.tverdVeschesPoV,
+    super.tolschPlenkiZhidk,
+    super.tolschDlyEmLakCh,
+    super.teoreticheskiiRashod,
+    super.prochnostPriIzgibe,
+    super.stoikostKObratUdaru,
+    super.prochnRastyazhPoEr,
+    super.blesk,
+    super.plotnost,
+    super.massDolyaNeletVesh,
+    super.vizKontrolPoverh,
+    super.vneshniiVid,
+    super.grunt,
+    super.tverdostPoKarandashu,
+  });
+
+  factory AnalysesModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const AnalysesModel();
+    }
+
+    return AnalysesModel(
+      bleskPri60Grad: json['analyses_blesk_pri_60_grad'] as double?,
+      uslovnayaVyazkost: json['analyses_uslovnaya_vyazkost'] as double?,
+      deltaE: json['analyses_delta_e'] as double?,
+      deltaL: json['analyses_delta_l'] as double?,
+      deltaA: json['analyses_delta_a'] as double?,
+      deltaB: json['analyses_delta_b'] as double?,
+      colorDiffDeltaeD8: json['analyses_color_diff_deltae_d8'] as double?,
+      vremyaSushki: json['analyses_vremya_sushki'] as double?,
+      pikovayaTemperatura: json['analyses_pikovaya_temperatura'] as double?,
+      tolschinaDlyaGrunta: json['analyses_tolschina_dlya_grunta'] as double?,
+      adgeziya: json['analyses_adgeziya'] as double?,
+      stoikostKRastvor: json['analyses_stoikost_k_rastvor'] as double?,
+      kolvoVykrSPartii: json['analyses_kolvo_vykr_s_partii'] as double?,
+      unnamed16: json['analyses_unnamed_16'] as double?,
+      stepenPeretira: json['analyses_stepen_peretira'] as double?,
+      tverdVeschesPoV: json['analyses_tverd_vesches_po_v'] as double?,
+      tolschPlenkiZhidk: json['analyses_tolsch_plenki_zhidk'] as double?,
+      tolschDlyEmLakCh: json['analyses_tolsch_dly_em_lak_ch'] as double?,
+      teoreticheskiiRashod: json['analyses_teoreticheskii_rashod'] as double?,
+      prochnostPriIzgibe: json['analyses_prochnost_pri_izgibe'] as double?,
+      stoikostKObratUdaru: json['analyses_stoikost_k_obrat_udaru'] as double?,
+      prochnRastyazhPoEr: json['analyses_prochn_rastyazh_po_er'] as double?,
+      blesk: json['analyses_blesk'] as double?,
+      plotnost: json['analyses_plotnost'] as double?,
+      massDolyaNeletVesh: json['analyses_mass_dolya_nelet_vesh'] as double?,
+      vizKontrolPoverh: json['analyses_viz_kontrol_poverh'] as String?,
+      vneshniiVid: json['analyses_vneshnii_vid'] as String?,
+      grunt: json['analyses_grunt'] as String?,
+      tverdostPoKarandashu: json['analyses_tverdost_po_karandashu'] as String?,
+    );
+  }
+
+  Analyses toEntity() {
+    return Analyses(
+      bleskPri60Grad: bleskPri60Grad,
+      uslovnayaVyazkost: uslovnayaVyazkost,
+      deltaE: deltaE,
+      deltaL: deltaL,
+      deltaA: deltaA,
+      deltaB: deltaB,
+      colorDiffDeltaeD8: colorDiffDeltaeD8,
+      vremyaSushki: vremyaSushki,
+      pikovayaTemperatura: pikovayaTemperatura,
+      tolschinaDlyaGrunta: tolschinaDlyaGrunta,
+      adgeziya: adgeziya,
+      stoikostKRastvor: stoikostKRastvor,
+      kolvoVykrSPartii: kolvoVykrSPartii,
+      unnamed16: unnamed16,
+      stepenPeretira: stepenPeretira,
+      tverdVeschesPoV: tverdVeschesPoV,
+      tolschPlenkiZhidk: tolschPlenkiZhidk,
+      tolschDlyEmLakCh: tolschDlyEmLakCh,
+      teoreticheskiiRashod: teoreticheskiiRashod,
+      prochnostPriIzgibe: prochnostPriIzgibe,
+      stoikostKObratUdaru: stoikostKObratUdaru,
+      prochnRastyazhPoEr: prochnRastyazhPoEr,
+      blesk: blesk,
+      plotnost: plotnost,
+      massDolyaNeletVesh: massDolyaNeletVesh,
+      vizKontrolPoverh: vizKontrolPoverh,
+      vneshniiVid: vneshniiVid,
+      grunt: grunt,
+      tverdostPoKarandashu: tverdostPoKarandashu,
+    );
+  }
+}
+

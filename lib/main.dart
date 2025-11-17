@@ -11,6 +11,7 @@ import 'package:prime_top_front/features/coating_types/application/cubit/coating
 import 'package:prime_top_front/features/coating_types/application/cubit/menu_cubit.dart';
 import 'package:prime_top_front/features/coating_types/data/coating_types_repository_impl.dart';
 import 'package:prime_top_front/features/coating_types/data/datasources/coating_types_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/products/application/cubit/product_detail_cubit.dart';
 import 'package:prime_top_front/features/products/application/cubit/products_cubit.dart';
 import 'package:prime_top_front/features/products/data/products_repository_impl.dart';
 import 'package:prime_top_front/features/products/data/datasources/products_remote_data_source_impl.dart';
@@ -58,6 +59,9 @@ class App extends StatelessWidget {
         ),
         BlocProvider<ProductsCubit>(
           create: (_) => ProductsCubit(productsRepository),
+        ),
+        BlocProvider<ProductDetailCubit>(
+          create: (_) => ProductDetailCubit(productsRepository),
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(

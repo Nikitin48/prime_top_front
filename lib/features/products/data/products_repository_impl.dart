@@ -1,5 +1,6 @@
 import 'package:prime_top_front/core/network/exceptions.dart';
 import 'package:prime_top_front/features/products/data/datasources/products_remote_data_source.dart';
+import 'package:prime_top_front/features/products/domain/entities/product_detail.dart';
 import 'package:prime_top_front/features/products/domain/repositories/products_repository.dart';
 
 class ProductsRepositoryImpl implements ProductsRepository {
@@ -37,6 +38,18 @@ class ProductsRepositoryImpl implements ProductsRepository {
       throw Exception('Ошибка сети: ${e.message}');
     } catch (e) {
       throw Exception('Неожиданная ошибка при получении продуктов: $e');
+    }
+  }
+
+  @override
+  Future<ProductDetail> getProductDetail(int productId) async {
+    try {
+      final dataResponse = await _remoteDataSource.getProductDetail(productId);
+      return dataResponse.toEntity();
+    } on NetworkException catch (e) {
+      throw Exception('Ошибка сети: ${e.message}');
+    } catch (e) {
+      throw Exception('Неожиданная ошибка при получении детальной информации о продукте: $e');
     }
   }
 }

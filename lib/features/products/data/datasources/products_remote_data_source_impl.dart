@@ -2,6 +2,7 @@ import 'package:prime_top_front/core/network/api_client.dart';
 import 'package:prime_top_front/core/network/exceptions.dart';
 import 'package:prime_top_front/core/network/network_client.dart';
 import 'package:prime_top_front/features/products/data/datasources/products_remote_data_source.dart';
+import 'package:prime_top_front/features/products/data/models/product_detail_model.dart';
 import 'package:prime_top_front/features/products/data/models/product_model.dart';
 
 class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
@@ -79,6 +80,20 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       rethrow;
     } catch (e) {
       throw ParseException('Ошибка при получении продуктов: $e');
+    }
+  }
+
+  @override
+  Future<ProductDetailModel> getProductDetail(int productId) async {
+    try {
+      final path = '/api/products/$productId/';
+      final response = await _apiClient.get(path);
+
+      return ProductDetailModel.fromJson(response);
+    } on NetworkException {
+      rethrow;
+    } catch (e) {
+      throw ParseException('Ошибка при получении детальной информации о продукте: $e');
     }
   }
 }

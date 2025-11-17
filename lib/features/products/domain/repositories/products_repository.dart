@@ -1,4 +1,5 @@
 import 'package:prime_top_front/features/products/domain/entities/product.dart';
+import 'package:prime_top_front/features/products/domain/entities/product_detail.dart';
 
 class ProductsResponse {
   const ProductsResponse({
@@ -21,5 +22,7 @@ abstract class ProductsRepository {
     int? limit,
     int? offset,
   });
+
+  Future<ProductDetail> getProductDetail(int productId);
 }
 

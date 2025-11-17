@@ -1,3 +1,4 @@
+import 'package:prime_top_front/features/products/data/models/product_detail_model.dart';
 import 'package:prime_top_front/features/products/data/models/product_model.dart';
 
 class ProductsDataResponse {
@@ -21,5 +22,7 @@ abstract class ProductsRemoteDataSource {
     int? limit,
     int? offset,
   });
+
+  Future<ProductDetailModel> getProductDetail(int productId);
 }
 
