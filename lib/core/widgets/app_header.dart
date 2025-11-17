@@ -6,6 +6,8 @@ import 'package:prime_top_front/features/home/presentation/widgets/icon_with_lab
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 import 'package:prime_top_front/features/auth/presentation/widgets/auth_dialog.dart';
+import 'package:prime_top_front/features/coating_types/application/cubit/menu_cubit.dart';
+import 'package:prime_top_front/features/coating_types/application/cubit/menu_state.dart';
 
 class AppHeader extends StatelessWidget {
   const AppHeader({super.key, required this.onOpenMenu});
@@ -27,7 +29,14 @@ class AppHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          _CatalogButton(onPressed: onOpenMenu),
+          BlocBuilder<MenuCubit, MenuState>(
+            builder: (context, menuState) {
+              return _CatalogButton(
+                onPressed: onOpenMenu,
+                isActive: menuState.isOpen,
+              );
+            },
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Padding(
@@ -125,9 +134,13 @@ class AppHeader extends StatelessWidget {
 
 /// Стилизованная кнопка каталога
 class _CatalogButton extends StatefulWidget {
-  const _CatalogButton({required this.onPressed});
+  const _CatalogButton({
+    required this.onPressed,
+    required this.isActive,
+  });
 
   final VoidCallback onPressed;
+  final bool isActive;
 
   @override
   State<_CatalogButton> createState() => _CatalogButtonState();
@@ -138,22 +151,30 @@ class _CatalogButtonState extends State<_CatalogButton> {
 
   @override
   Widget build(BuildContext context) {
+    final Color baseColor = Colors.white;
+    final Color hoverColor = Color.lerp(Colors.white, ColorName.primary, 0.35)!;
+    final Color currentColor = _isHovered || widget.isActive ? hoverColor : baseColor;
+    final Color activeBg = Colors.white.withOpacity(0.12);
+    final Color backgroundColor = widget.isActive || _isHovered ? activeBg : Colors.transparent;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onPressed,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 150),
-            opacity: _isHovered ? 0.7 : 1.0,
-            child: const Icon(
-              Icons.menu,
-              color: Colors.white,
-              size: 20,
-            ),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Icon(
+            Icons.menu,
+            color: currentColor,
+            size: 20,
           ),
         ),
       ),
