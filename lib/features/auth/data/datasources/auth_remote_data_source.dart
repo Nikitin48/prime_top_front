@@ -18,5 +18,8 @@ abstract class AuthRemoteDataSource {
 
   /// Выход пользователя
   Future<void> logout();
+
+  /// Восстанавливает токен авторизации (используется при загрузке сохраненной сессии)
+  void restoreToken(String? token);
 }
 

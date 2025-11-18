@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prime_top_front/core/config/api_config.dart';
 import 'package:prime_top_front/core/network/network_client.dart';
 import 'package:prime_top_front/core/router/router.dart';
+import 'package:prime_top_front/core/storage/auth_storage_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/theme/cubit/theme_cubit.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
@@ -33,6 +34,7 @@ class App extends StatelessWidget {
     final networkClient = HttpClient(baseUrl: ApiConfig.baseUrl);
     
     // Auth dependencies
+    final authStorageService = AuthStorageService();
     final authRemoteDataSource = AuthRemoteDataSourceImpl(
       networkClient: networkClient,
       baseUrl: ApiConfig.baseUrl,
@@ -56,7 +58,9 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
-        BlocProvider<AuthCubit>(create: (_) => AuthCubit(authRepository)),
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(authRepository, authStorageService),
+        ),
         BlocProvider<MenuCubit>(create: (_) => MenuCubit()),
         BlocProvider<CoatingTypesCubit>(
           create: (_) => CoatingTypesCubit(coatingTypesRepository),

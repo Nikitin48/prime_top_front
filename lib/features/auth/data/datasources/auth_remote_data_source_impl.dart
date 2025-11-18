@@ -87,6 +87,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> logout() async {
     _apiClient.setAuthToken(null);
   }
+
+  @override
+  void restoreToken(String? token) {
+    _apiClient.setAuthToken(token);
+  }
 }
 
 /// Внутренний API клиент для авторизации

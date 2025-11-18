@@ -56,4 +56,9 @@ class AuthRepositoryImpl implements AuthRepository {
       // При выходе игнорируем ошибки
     }
   }
+
+  @override
+  void restoreToken(String? token) {
+    _remoteDataSource.restoreToken(token);
+  }
 }

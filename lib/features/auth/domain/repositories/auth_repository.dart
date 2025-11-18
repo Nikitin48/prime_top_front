@@ -9,6 +9,7 @@ abstract class AuthRepository {
     required String clientEmail,
   });
   Future<void> logout();
+  void restoreToken(String? token);
 }
 
 
