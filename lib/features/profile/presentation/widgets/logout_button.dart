@@ -34,33 +34,9 @@ class LogoutButton extends StatelessWidget {
   }
 
   Future<void> _handleLogout(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Подтверждение выхода'),
-        content: const Text('Вы уверены, что хотите выйти из аккаунта?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Отмена'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorName.danger,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Выйти'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && context.mounted) {
-      await context.read<AuthCubit>().logout();
-      if (context.mounted) {
-        context.go('/');
-      }
+    await context.read<AuthCubit>().logout();
+    if (context.mounted) {
+      context.go('/');
     }
   }
 }
