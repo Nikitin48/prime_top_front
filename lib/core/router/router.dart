@@ -95,19 +95,26 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) => const NoTransitionPage(child: MyOrdersPage()),
         ),
         GoRoute(
+          path: '/orders/history',
+          name: 'orders_history',
+          pageBuilder: (context, state) => const NoTransitionPage(child: OrderHistoryPage()),
+        ),
+        GoRoute(
           path: '/orders/:orderId',
           name: 'order_detail',
           pageBuilder: (context, state) {
-            final orderId = int.parse(state.pathParameters['orderId']!);
+            final orderIdParam = state.pathParameters['orderId'];
+            if (orderIdParam == null) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            final orderId = int.tryParse(orderIdParam);
+            if (orderId == null) {
+              return const NoTransitionPage(child: HomePage());
+            }
             return NoTransitionPage(
               child: OrderDetailPage(orderId: orderId),
             );
           },
-        ),
-        GoRoute(
-          path: '/orders/history',
-          name: 'orders_history',
-          pageBuilder: (context, state) => const NoTransitionPage(child: OrderHistoryPage()),
         ),
         GoRoute(
           path: '/stock',
@@ -123,7 +130,14 @@ final GoRouter appRouter = GoRouter(
           path: '/products/:productId',
           name: 'product_detail',
           pageBuilder: (context, state) {
-            final productId = int.parse(state.pathParameters['productId']!);
+            final productIdParam = state.pathParameters['productId'];
+            if (productIdParam == null) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            final productId = int.tryParse(productIdParam);
+            if (productId == null) {
+              return const NoTransitionPage(child: HomePage());
+            }
             return NoTransitionPage(
               child: ProductDetailPage(productId: productId),
             );
