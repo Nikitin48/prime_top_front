@@ -15,6 +15,10 @@ import 'package:prime_top_front/features/products/application/cubit/product_deta
 import 'package:prime_top_front/features/products/application/cubit/products_cubit.dart';
 import 'package:prime_top_front/features/products/data/products_repository_impl.dart';
 import 'package:prime_top_front/features/products/data/datasources/products_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/orders/application/cubit/orders_cubit.dart';
+import 'package:prime_top_front/features/orders/application/cubit/order_detail_cubit.dart';
+import 'package:prime_top_front/features/orders/data/orders_repository_impl.dart';
+import 'package:prime_top_front/features/orders/data/datasources/orders_remote_data_source_impl.dart';
 
 void main() {
   runApp(const App());
@@ -62,6 +66,30 @@ class App extends StatelessWidget {
         ),
         BlocProvider<ProductDetailCubit>(
           create: (_) => ProductDetailCubit(productsRepository),
+        ),
+        BlocProvider<OrdersCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final ordersRemoteDataSource = OrdersRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final ordersRepository = OrdersRepositoryImpl(ordersRemoteDataSource);
+            return OrdersCubit(ordersRepository);
+          },
+        ),
+        BlocProvider<OrderDetailCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final ordersRemoteDataSource = OrdersRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final ordersRepository = OrdersRepositoryImpl(ordersRemoteDataSource);
+            return OrderDetailCubit(ordersRepository);
+          },
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(

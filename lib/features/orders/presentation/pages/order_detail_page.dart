@@ -3,38 +3,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
-import 'package:prime_top_front/features/products/application/cubit/product_detail_cubit.dart';
-import 'package:prime_top_front/features/products/application/cubit/product_detail_state.dart';
-import 'package:prime_top_front/features/products/presentation/widgets/product_info_section.dart';
-import 'package:prime_top_front/features/products/presentation/widgets/series_list_section.dart';
+import 'package:prime_top_front/features/orders/application/cubit/order_detail_cubit.dart';
+import 'package:prime_top_front/features/orders/application/cubit/order_detail_state.dart';
+import 'package:prime_top_front/features/orders/presentation/widgets/order_info_section.dart';
+import 'package:prime_top_front/features/orders/presentation/widgets/order_items_section.dart';
+import 'package:prime_top_front/features/orders/presentation/widgets/order_status_history_section.dart';
 
-class ProductDetailPage extends StatefulWidget {
-  const ProductDetailPage({super.key, required this.productId});
+class OrderDetailPage extends StatefulWidget {
+  const OrderDetailPage({super.key, required this.orderId});
 
-  final int productId;
+  final int orderId;
 
   @override
-  State<ProductDetailPage> createState() => _ProductDetailPageState();
+  State<OrderDetailPage> createState() => _OrderDetailPageState();
 }
 
-class _ProductDetailPageState extends State<ProductDetailPage> {
+class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<ProductDetailCubit>().loadProductDetail(widget.productId);
+        context.read<OrderDetailCubit>().loadOrder(widget.orderId);
       }
     });
   }
 
   @override
-  void didUpdateWidget(ProductDetailPage oldWidget) {
+  void didUpdateWidget(OrderDetailPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.productId != widget.productId) {
+    if (oldWidget.orderId != widget.orderId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          context.read<ProductDetailCubit>().loadProductDetail(widget.productId);
+          context.read<OrderDetailCubit>().loadOrder(widget.orderId);
         }
       });
     }
@@ -42,23 +43,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const _ProductDetailView();
+    return const _OrderDetailView();
   }
 }
 
-class _ProductDetailView extends StatelessWidget {
-  const _ProductDetailView();
+class _OrderDetailView extends StatelessWidget {
+  const _OrderDetailView();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return ScreenWrapper(
-      child: BlocBuilder<ProductDetailCubit, ProductDetailState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return Center(
+    return BlocBuilder<OrderDetailCubit, OrderDetailState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return ScreenWrapper(
+            child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: const Padding(
@@ -66,11 +67,13 @@ class _ProductDetailView extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          if (state.errorMessage != null) {
-            return Center(
+        if (state.errorMessage != null) {
+          return ScreenWrapper(
+            child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: Padding(
@@ -94,9 +97,9 @@ class _ProductDetailView extends StatelessWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          final productId = GoRouterState.of(context).pathParameters['productId'];
-                          if (productId != null) {
-                            context.read<ProductDetailCubit>().loadProductDetail(int.parse(productId));
+                          final orderId = GoRouterState.of(context).pathParameters['orderId'];
+                          if (orderId != null) {
+                            context.read<OrderDetailCubit>().loadOrder(int.parse(orderId));
                           }
                         },
                         child: const Text('Повторить'),
@@ -105,17 +108,19 @@ class _ProductDetailView extends StatelessWidget {
                   ),
                 ),
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          if (state.productDetail == null) {
-            return Center(
+        if (state.order == null) {
+          return ScreenWrapper(
+            child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1200),
                 child: Padding(
                   padding: const EdgeInsets.all(32.0),
                   child: Text(
-                    'Продукт не найден',
+                    'Заказ не найден',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: isDark
                           ? ColorName.darkThemeTextSecondary
@@ -124,33 +129,36 @@ class _ProductDetailView extends StatelessWidget {
                   ),
                 ),
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          final productDetail = state.productDetail!;
-          final product = productDetail.product;
+        final order = state.order!;
 
-          return Center(
+        return ScreenWrapper(
+          child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1200),
-              child: SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    ProductInfoSection(
-                      product: product,
-                      coatingType: product.coatingType,
-                    ),
-                    const SizedBox(height: 32),
-                    SeriesListSection(series: productDetail.series),
+                    OrderInfoSection(order: order),
+                    const SizedBox(height: 24),
+                    OrderItemsSection(items: order.items),
+                    if (order.statusHistory.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      OrderStatusHistorySection(history: order.statusHistory),
+                    ],
                   ],
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

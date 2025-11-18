@@ -22,16 +22,21 @@ class ScreenWrapper extends StatelessWidget {
     final statusBarHeight = MediaQuery.of(context).padding.top;
     final appBar = appBarHeight ?? _defaultAppBarHeight;
     
-    final availableHeight = screenHeight - appBar - statusBarHeight;
+    final minHeight = screenHeight - appBar - statusBarHeight;
 
-    return SizedBox(
-      height: availableHeight,
-      child: padding != null
-          ? Padding(
-              padding: padding!,
-              child: child,
-            )
-          : child,
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: minHeight,
+      ),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: padding != null
+            ? Padding(
+                padding: padding!,
+                child: child,
+              )
+            : child,
+      ),
     );
   }
 }

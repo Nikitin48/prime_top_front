@@ -7,6 +7,7 @@ import 'package:prime_top_front/features/home/presentation/widgets/home_drawer.d
 import 'package:prime_top_front/core/widgets/app_header.dart';
 import 'package:prime_top_front/core/widgets/app_footer.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/my_orders_page.dart';
+import 'package:prime_top_front/features/orders/presentation/pages/order_detail_page.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/order_history_page.dart';
 import 'package:prime_top_front/features/profile/presentation/pages/client_profile_page.dart';
 import 'package:prime_top_front/features/stock/presentation/pages/stock_page.dart';
@@ -92,6 +93,16 @@ final GoRouter appRouter = GoRouter(
           path: '/orders',
           name: 'orders',
           pageBuilder: (context, state) => const NoTransitionPage(child: MyOrdersPage()),
+        ),
+        GoRoute(
+          path: '/orders/:orderId',
+          name: 'order_detail',
+          pageBuilder: (context, state) {
+            final orderId = int.parse(state.pathParameters['orderId']!);
+            return NoTransitionPage(
+              child: OrderDetailPage(orderId: orderId),
+            );
+          },
         ),
         GoRoute(
           path: '/orders/history',
