@@ -150,3 +150,5 @@ class AssetGenImageAnimation {
   final Duration duration;
   final int frames;
 }
+
+

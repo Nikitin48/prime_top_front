@@ -110,7 +110,6 @@ class ProductsColumn extends StatelessWidget {
                 isDark: isDark,
                 theme: theme,
                 onTap: () {
-                  // Закрываем меню при переходе на страницу продукта
                   context.read<MenuCubit>().closeMenu();
                   context.go('/products/${product.id}');
                 },
