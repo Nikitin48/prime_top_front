@@ -3,6 +3,7 @@ import 'package:prime_top_front/core/config/api_config.dart';
 import 'package:prime_top_front/core/network/network_client.dart';
 import 'package:prime_top_front/core/router/router.dart';
 import 'package:prime_top_front/core/storage/auth_storage_service.dart';
+import 'package:prime_top_front/core/storage/landing_cache_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/theme/cubit/theme_cubit.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
@@ -12,6 +13,10 @@ import 'package:prime_top_front/features/coating_types/application/cubit/coating
 import 'package:prime_top_front/features/coating_types/application/cubit/menu_cubit.dart';
 import 'package:prime_top_front/features/coating_types/data/coating_types_repository_impl.dart';
 import 'package:prime_top_front/features/coating_types/data/datasources/coating_types_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/home/application/cubit/landing_stats_cubit.dart';
+import 'package:prime_top_front/features/home/application/cubit/popular_products_cubit.dart';
+import 'package:prime_top_front/features/home/data/datasources/landing_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/home/data/landing_repository_impl.dart';
 import 'package:prime_top_front/features/products/application/cubit/product_detail_cubit.dart';
 import 'package:prime_top_front/features/products/application/cubit/products_cubit.dart';
 import 'package:prime_top_front/features/products/data/products_repository_impl.dart';
@@ -55,6 +60,14 @@ class App extends StatelessWidget {
     );
     final productsRepository = ProductsRepositoryImpl(productsRemoteDataSource);
 
+    // Landing dependencies
+    final landingRemoteDataSource = LandingRemoteDataSourceImpl(
+      networkClient: networkClient,
+      baseUrl: ApiConfig.baseUrl,
+    );
+    final landingRepository = LandingRepositoryImpl(landingRemoteDataSource);
+    final landingCacheService = LandingCacheService();
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
@@ -70,6 +83,12 @@ class App extends StatelessWidget {
         ),
         BlocProvider<ProductDetailCubit>(
           create: (_) => ProductDetailCubit(productsRepository),
+        ),
+        BlocProvider<LandingStatsCubit>(
+          create: (_) => LandingStatsCubit(landingRepository, landingCacheService)..load(),
+        ),
+        BlocProvider<PopularProductsCubit>(
+          create: (_) => PopularProductsCubit(landingRepository, landingCacheService)..load(),
         ),
         BlocProvider<OrdersCubit>(
           create: (context) {

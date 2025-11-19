@@ -25,7 +25,9 @@ class _IconWithLabelState extends State<IconWithLabel> {
     final Color baseColor = Colors.white;
     final Color hoverColor = Color.lerp(Colors.white, ColorName.primary, 0.35)!;
     final Color currentColor = _isHovered ? hoverColor : baseColor;
-    final Color hoverBg = _isHovered ? Colors.white.withOpacity(0.12) : Colors.transparent;
+    final Color hoverBg = _isHovered
+        ? Colors.white.withOpacity(0.12)
+        : Colors.transparent;
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -47,7 +49,9 @@ class _IconWithLabelState extends State<IconWithLabel> {
               const SizedBox(height: 2),
               Text(
                 widget.label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(color: currentColor),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(color: currentColor),
               ),
             ],
           ),
@@ -56,5 +60,3 @@ class _IconWithLabelState extends State<IconWithLabel> {
     );
   }
 }
-
-

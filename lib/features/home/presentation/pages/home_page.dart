@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
+import 'package:prime_top_front/features/home/presentation/widgets/landing_sections.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,14 +8,19 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenWrapper(
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 720),
-          child: const Text(''),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            HomeHeroSection(),
+            PrimeTopDirectionsSection(),
+            LandingStatsSection(),
+            PopularProductsSection(),
+            ShowcaseSection(),
+            HomeCtaSection(),
+          ],
         ),
       ),
     );
   }
 }
-
-
