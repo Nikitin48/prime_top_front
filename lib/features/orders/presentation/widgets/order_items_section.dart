@@ -179,9 +179,54 @@ class _OrderItemCard extends StatelessWidget {
               ),
             ],
           ),
-          if (item.series.name != null ||
-              item.series.productionDate != null ||
-              item.series.expireDate != null) ...[
+          if (item.series != null) ...[
+            if (item.series!.name != null ||
+                item.series!.productionDate != null ||
+                item.series!.expireDate != null) ...[
+              const SizedBox(height: 12),
+              Divider(
+                color: isDark
+                    ? ColorName.darkThemeBorderSoft
+                    : ColorName.borderSoft,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Информация о серии',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: isDark
+                      ? ColorName.darkThemeTextSecondary
+                      : ColorName.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (item.series!.name != null)
+                _SeriesInfoRow(
+                  label: 'Название',
+                  value: item.series!.name!,
+                  isDark: isDark,
+                  theme: theme,
+                ),
+              if (item.series!.productionDate != null) ...[
+                const SizedBox(height: 4),
+                _SeriesInfoRow(
+                  label: 'Дата производства',
+                  value: formatDate(item.series!.productionDate),
+                  isDark: isDark,
+                  theme: theme,
+                ),
+              ],
+              if (item.series!.expireDate != null) ...[
+                const SizedBox(height: 4),
+                _SeriesInfoRow(
+                  label: 'Срок годности',
+                  value: formatDate(item.series!.expireDate),
+                  isDark: isDark,
+                  theme: theme,
+                ),
+              ],
+            ],
+          ] else ...[
             const SizedBox(height: 12),
             Divider(
               color: isDark
@@ -189,41 +234,23 @@ class _OrderItemCard extends StatelessWidget {
                   : ColorName.borderSoft,
             ),
             const SizedBox(height: 12),
-            Text(
-              'Информация о серии',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: isDark
-                    ? ColorName.darkThemeTextSecondary
-                    : ColorName.textSecondary,
-                fontWeight: FontWeight.w500,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: ColorName.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: ColorName.primary.withOpacity(0.3),
+                ),
+              ),
+              child: Text(
+                'Данный товар будет отправлен на производство',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: ColorName.primary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            if (item.series.name != null)
-              _SeriesInfoRow(
-                label: 'Название',
-                value: item.series.name!,
-                isDark: isDark,
-                theme: theme,
-              ),
-            if (item.series.productionDate != null) ...[
-              const SizedBox(height: 4),
-              _SeriesInfoRow(
-                label: 'Дата производства',
-                value: formatDate(item.series.productionDate),
-                isDark: isDark,
-                theme: theme,
-              ),
-            ],
-            if (item.series.expireDate != null) ...[
-              const SizedBox(height: 4),
-              _SeriesInfoRow(
-                label: 'Срок годности',
-                value: formatDate(item.series.expireDate),
-                isDark: isDark,
-                theme: theme,
-              ),
-            ],
           ],
         ],
       ),

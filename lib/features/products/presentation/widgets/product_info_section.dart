@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/utils/ral_color_helper.dart';
+import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
+import 'package:prime_top_front/features/cart/application/cubit/cart_state.dart';
 import 'package:prime_top_front/features/coating_types/domain/entities/coating_type.dart';
 import 'package:prime_top_front/features/products/domain/entities/product.dart';
+import 'package:prime_top_front/features/products/domain/entities/series.dart';
 
 class ProductInfoSection extends StatelessWidget {
   const ProductInfoSection({
     super.key,
     required this.product,
     required this.coatingType,
+    this.availableSeries,
   });
 
   final Product product;
   final CoatingType coatingType;
+  final List<Series>? availableSeries;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,6 @@ class ProductInfoSection extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Цветовой индикатор
           Container(
             width: 64,
             height: 64,
@@ -51,7 +56,6 @@ class ProductInfoSection extends StatelessWidget {
               ),
             ),
           ),
-          // Информация о продукте
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,6 +99,52 @@ class ProductInfoSection extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+                BlocBuilder<CartCubit, CartState>(
+                  builder: (context, cartState) {
+                    final itemKey = '${product.id}_null';
+                    final isAddingThisItem = cartState.isAddingItem && cartState.addingItemKey == itemKey;
+                    
+                    return Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: ColorName.primary,
+                      ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: isAddingThisItem
+                        ? null
+                        : () {
+                            context.read<CartCubit>().addItemToCart(
+                                  productId: product.id,
+                                  seriesId: null,
+                                  quantity: 1,
+                                );
+                          },
+                    borderRadius: BorderRadius.circular(28),
+                    child: Center(
+                      child: isAddingThisItem
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : Icon(
+                              Icons.shopping_cart_outlined,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),

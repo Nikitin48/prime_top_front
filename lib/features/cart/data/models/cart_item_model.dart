@@ -1,17 +1,17 @@
-import 'package:prime_top_front/features/orders/domain/entities/order_item.dart';
+import 'package:prime_top_front/features/cart/domain/entities/cart_item.dart';
 import 'package:prime_top_front/features/products/data/models/product_model.dart';
 import 'package:prime_top_front/features/products/data/models/series_model.dart';
 
-class OrderItemModel extends OrderItem {
-  const OrderItemModel({
+class CartItemModel extends CartItem {
+  const CartItemModel({
     required super.id,
     required super.quantity,
     required super.product,
     super.series,
   });
 
-  factory OrderItemModel.fromJson(Map<String, dynamic> json) {
-    return OrderItemModel(
+  factory CartItemModel.fromJson(Map<String, dynamic> json) {
+    return CartItemModel(
       id: json['id'] as int,
       quantity: json['quantity'] as int,
       product: ProductModel.fromJson(
@@ -40,8 +40,8 @@ class OrderItemModel extends OrderItem {
     };
   }
 
-  OrderItem toEntity() {
-    return OrderItem(
+  CartItem toEntity() {
+    return CartItem(
       id: id,
       quantity: quantity,
       product: (product as ProductModel).toEntity(),

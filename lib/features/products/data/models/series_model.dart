@@ -8,6 +8,8 @@ class SeriesModel extends Series {
     super.productionDate,
     super.expireDate,
     AnalysesModel? analyses,
+    super.availableQuantity = 0.0,
+    super.inStock = false,
   }) : _analysesModel = analyses,
        super(analyses: analyses);
 
@@ -31,6 +33,8 @@ class SeriesModel extends Series {
       analyses: json['analyses'] != null
           ? AnalysesModel.fromJson(json['analyses'] as Map<String, dynamic>?)
           : null,
+      availableQuantity: (json['available_quantity'] as num?)?.toDouble() ?? 0.0,
+      inStock: json['in_stock'] as bool? ?? false,
     );
   }
 
@@ -41,6 +45,8 @@ class SeriesModel extends Series {
       productionDate: productionDate,
       expireDate: expireDate,
       analyses: _analysesModel?.toEntity(),
+      availableQuantity: availableQuantity,
+      inStock: inStock,
     );
   }
 }

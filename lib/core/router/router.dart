@@ -15,6 +15,7 @@ import 'package:prime_top_front/features/coating_types/application/cubit/menu_cu
 import 'package:prime_top_front/features/coating_types/application/cubit/menu_state.dart';
 import 'package:prime_top_front/features/coating_types/presentation/widgets/coating_types_menu.dart';
 import 'package:prime_top_front/features/products/presentation/pages/product_detail_page.dart';
+import 'package:prime_top_front/features/cart/presentation/pages/cart_page.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: <RouteBase>[
@@ -142,6 +143,11 @@ final GoRouter appRouter = GoRouter(
               child: ProductDetailPage(productId: productId),
             );
           },
+        ),
+        GoRoute(
+          path: '/cart',
+          name: 'cart',
+          pageBuilder: (context, state) => const NoTransitionPage(child: CartPage()),
         ),
       ],
     ),

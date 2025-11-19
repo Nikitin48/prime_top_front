@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
+import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
 import 'package:prime_top_front/features/products/domain/entities/series.dart';
 import 'package:prime_top_front/features/products/presentation/widgets/series_card.dart';
 
 class SeriesListSection extends StatelessWidget {
-  const SeriesListSection({super.key, required this.series});
+  const SeriesListSection({
+    super.key,
+    required this.series,
+    required this.productId,
+  });
 
   final List<Series> series;
+  final int productId;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +36,7 @@ class SeriesListSection extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            'Серии не найдены',
+            'Нет доступных серий в наличии',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: isDark
                   ? ColorName.darkThemeTextSecondary
@@ -44,7 +51,7 @@ class SeriesListSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Серии товара (${series.length})',
+          'Доступные серии (${series.length})',
           style: theme.textTheme.titleLarge?.copyWith(
             color: isDark
                 ? ColorName.darkThemeTextPrimary
@@ -59,7 +66,18 @@ class SeriesListSection extends StatelessWidget {
           itemCount: series.length,
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
-            return SeriesCard(series: series[index]);
+            final currentSeries = series[index];
+            return SeriesCard(
+              series: currentSeries,
+              productId: productId,
+              onAddToCart: () {
+                context.read<CartCubit>().addItemToCart(
+                      productId: productId,
+                      seriesId: currentSeries.id,
+                      quantity: 1,
+                    );
+              },
+            );
           },
         ),
       ],

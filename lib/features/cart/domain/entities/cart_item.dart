@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:prime_top_front/features/products/domain/entities/product.dart';
 import 'package:prime_top_front/features/products/domain/entities/series.dart';
 
-class OrderItem extends Equatable {
-  const OrderItem({
+class CartItem extends Equatable {
+  const CartItem({
     required this.id,
     required this.quantity,
     required this.product,

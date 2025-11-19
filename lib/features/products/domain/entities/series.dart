@@ -7,6 +7,8 @@ class Series {
     this.productionDate,
     this.expireDate,
     this.analyses,
+    this.availableQuantity = 0.0,
+    this.inStock = false,
   });
 
   final int id;
@@ -14,6 +16,8 @@ class Series {
   final DateTime? productionDate;
   final DateTime? expireDate;
   final Analyses? analyses;
+  final double availableQuantity;
+  final bool inStock;
 
   @override
   bool operator ==(Object other) =>
@@ -24,7 +28,9 @@ class Series {
           name == other.name &&
           productionDate == other.productionDate &&
           expireDate == other.expireDate &&
-          analyses == other.analyses;
+          analyses == other.analyses &&
+          availableQuantity == other.availableQuantity &&
+          inStock == other.inStock;
 
   @override
   int get hashCode =>
@@ -32,6 +38,8 @@ class Series {
       name.hashCode ^
       productionDate.hashCode ^
       expireDate.hashCode ^
-      analyses.hashCode;
+      analyses.hashCode ^
+      availableQuantity.hashCode ^
+      inStock.hashCode;
 }
 

@@ -97,9 +97,9 @@ class AppHeader extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: IconWithLabel(
-                        icon: Icons.history_outlined,
-                        label: 'История',
-                        onTap: () => context.goNamed('orders_history'),
+                        icon: Icons.shopping_basket_outlined,
+                        label: 'Корзина',
+                        onTap: () => context.goNamed('cart'),
                       ),
                     ),
                   ],

@@ -19,6 +19,12 @@ abstract class NetworkClient {
     Object? body,
   });
 
+  Future<http.Response> patch(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+  });
+
   Future<http.Response> delete(
     String url, {
     Map<String, String>? headers,
@@ -85,6 +91,19 @@ class HttpClient implements NetworkClient {
     Object? body,
   }) {
     return _client.put(
+      Uri.parse(_buildUrl(url)),
+      headers: _mergeHeaders(headers),
+      body: body,
+    );
+  }
+
+  @override
+  Future<http.Response> patch(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+  }) {
+    return _client.patch(
       Uri.parse(_buildUrl(url)),
       headers: _mergeHeaders(headers),
       body: body,

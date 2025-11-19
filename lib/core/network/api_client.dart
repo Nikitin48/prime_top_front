@@ -47,6 +47,20 @@ abstract class ApiClient {
     return _handleResponse(await _client.put(url, headers: requestHeaders, body: jsonBody));
   }
 
+  /// Выполняет PATCH запрос
+  Future<Map<String, dynamic>> patch(
+    String url, {
+    Map<String, String>? headers,
+    Object? body,
+  }) async {
+    final jsonBody = body is Map || body is List ? jsonEncode(body) : body;
+    final requestHeaders = {
+      'Content-Type': 'application/json',
+      ...?headers,
+    };
+    return _handleResponse(await _client.patch(url, headers: requestHeaders, body: jsonBody));
+  }
+
   /// Выполняет DELETE запрос
   Future<Map<String, dynamic>> delete(
     String url, {

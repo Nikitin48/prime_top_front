@@ -20,6 +20,9 @@ import 'package:prime_top_front/features/orders/application/cubit/orders_cubit.d
 import 'package:prime_top_front/features/orders/application/cubit/order_detail_cubit.dart';
 import 'package:prime_top_front/features/orders/data/orders_repository_impl.dart';
 import 'package:prime_top_front/features/orders/data/datasources/orders_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
+import 'package:prime_top_front/features/cart/data/cart_repository_impl.dart';
+import 'package:prime_top_front/features/cart/data/datasources/cart_remote_data_source_impl.dart';
 
 void main() {
   runApp(const App());
@@ -93,6 +96,21 @@ class App extends StatelessWidget {
             );
             final ordersRepository = OrdersRepositoryImpl(ordersRemoteDataSource);
             return OrderDetailCubit(ordersRepository);
+          },
+        ),
+        BlocProvider<CartCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final cartRemoteDataSource = CartRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final cartRepository = CartRepositoryImpl(
+              cartRemoteDataSource,
+              productsRepository: productsRepository,
+            );
+            return CartCubit(cartRepository);
           },
         ),
       ],
