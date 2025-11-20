@@ -19,11 +19,23 @@ class ClientInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? ColorName.darkThemeCardBackground : ColorName.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft,
+        gradient: LinearGradient(
+          colors: [
+            ColorName.secondary.withValues(alpha: 0.12),
+            isDark ? ColorName.darkThemeCardBackground : Colors.white,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,25 +43,23 @@ class ClientInfoCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: ColorName.secondary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: ColorName.secondary.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   Icons.business,
                   color: ColorName.secondary,
-                  size: 24,
+                  size: 28,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
-                'Данные клиента',
+                'Данные организации',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  color: isDark
-                      ? ColorName.darkThemeTextPrimary
-                      : ColorName.textPrimary,
-                  fontWeight: FontWeight.bold,
+                  color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
@@ -57,7 +67,7 @@ class ClientInfoCard extends StatelessWidget {
           const SizedBox(height: 24),
           ProfileInfoRow(
             icon: Icons.business_center_outlined,
-            label: 'Название компании',
+            label: 'Название',
             value: client.name,
             isDark: isDark,
             theme: theme,
@@ -65,7 +75,7 @@ class ClientInfoCard extends StatelessWidget {
           const SizedBox(height: 16),
           ProfileInfoRow(
             icon: Icons.email_outlined,
-            label: 'Email клиента',
+            label: 'Email',
             value: client.email,
             isDark: isDark,
             theme: theme,
@@ -83,4 +93,3 @@ class ClientInfoCard extends StatelessWidget {
     );
   }
 }
-
