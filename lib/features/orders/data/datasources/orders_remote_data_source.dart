@@ -7,6 +7,7 @@ abstract class OrdersRemoteDataSource {
     String? createdFrom,
     String? createdTo,
     int? limit,
+    int? recent,
   });
 
   Future<OrderModel> getOrderById(int orderId);

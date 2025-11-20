@@ -20,6 +20,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     String? createdFrom,
     String? createdTo,
     int? limit,
+    int? recent,
   }) async {
     try {
       final queryParams = <String, String>{};
@@ -34,6 +35,9 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
       }
       if (limit != null) {
         queryParams['limit'] = limit.toString();
+      }
+      if (recent != null) {
+        queryParams['recent'] = recent.toString();
       }
 
       final queryString = queryParams.isEmpty

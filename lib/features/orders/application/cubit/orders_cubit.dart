@@ -12,6 +12,7 @@ class OrdersCubit extends Cubit<OrdersState> {
     String? createdFrom,
     String? createdTo,
     int? limit,
+    int? recent,
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
@@ -21,6 +22,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         createdFrom: createdFrom,
         createdTo: createdTo,
         limit: limit,
+        recent: recent,
       );
       emit(state.copyWith(
         ordersResponse: ordersResponse,

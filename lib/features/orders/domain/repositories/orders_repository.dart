@@ -7,6 +7,7 @@ abstract class OrdersRepository {
     String? createdFrom,
     String? createdTo,
     int? limit,
+    int? recent,
   });
 
   Future<Order> getOrderById(int orderId);

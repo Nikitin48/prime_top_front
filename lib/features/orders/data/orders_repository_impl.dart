@@ -15,6 +15,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
     String? createdFrom,
     String? createdTo,
     int? limit,
+    int? recent,
   }) async {
     try {
       final dataResponse = await _remoteDataSource.getOrders(
@@ -22,6 +23,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
         createdFrom: createdFrom,
         createdTo: createdTo,
         limit: limit,
+        recent: recent,
       );
       return dataResponse.toEntity();
     } on NetworkException catch (e) {

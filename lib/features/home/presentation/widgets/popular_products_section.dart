@@ -41,7 +41,7 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
         }
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 64),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1400),
             child: Column(
@@ -82,7 +82,7 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
     bool isDark,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 64),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
@@ -108,7 +108,7 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
     String errorMessage,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 64),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
