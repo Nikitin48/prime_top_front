@@ -28,6 +28,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required String clientName,
     required String clientEmail,
+    String? firstName,
+    String? lastName,
   }) async {
     try {
       final user = await _remoteDataSource.register(
@@ -35,6 +37,8 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         clientName: clientName,
         clientEmail: clientEmail,
+        firstName: firstName,
+        lastName: lastName,
       );
       return user;
     } on ConflictException {

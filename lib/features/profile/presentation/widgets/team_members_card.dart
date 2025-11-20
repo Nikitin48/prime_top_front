@@ -74,12 +74,16 @@ class TeamMembersCard extends StatelessWidget {
               ),
             )
           else
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
+            Column(
               children: members.map((member) {
                 final isCurrent = member.id == currentUserId;
+                final name = [member.firstName, member.lastName]
+                    .where((e) => e != null && e!.isNotEmpty)
+                    .map((e) => e!)
+                    .join(' ');
                 return Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 10),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: isCurrent
@@ -101,13 +105,29 @@ class TeamMembersCard extends StatelessWidget {
                         color: isCurrent ? ColorName.primary : ColorName.textSecondary,
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        member.email,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: isCurrent
-                              ? ColorName.primary
-                              : (isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary),
-                          fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              member.email,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: isCurrent
+                                    ? ColorName.primary
+                                    : (isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary),
+                                fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
+                              ),
+                            ),
+                            if (name.isNotEmpty)
+                              Text(
+                                name,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: isCurrent
+                                      ? ColorName.primary
+                                      : (isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ],

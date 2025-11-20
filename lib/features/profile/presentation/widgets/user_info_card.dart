@@ -4,11 +4,7 @@ import 'package:prime_top_front/features/auth/domain/entities/user.dart';
 import 'package:prime_top_front/features/profile/presentation/widgets/profile_info_row.dart';
 
 class UserInfoCard extends StatelessWidget {
-  const UserInfoCard({
-    super.key,
-    required this.user,
-    required this.formatDate,
-  });
+  const UserInfoCard({super.key, required this.user, required this.formatDate});
 
   final User user;
   final String Function(String?) formatDate;
@@ -30,7 +26,9 @@ class UserInfoCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+        border: Border.all(
+          color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -60,7 +58,9 @@ class UserInfoCard extends StatelessWidget {
               Text(
                 'Аккаунт пользователя',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                  color: isDark
+                      ? ColorName.darkThemeTextPrimary
+                      : ColorName.textPrimary,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -75,13 +75,13 @@ class UserInfoCard extends StatelessWidget {
             theme: theme,
           ),
           const SizedBox(height: 16),
-          ProfileInfoRow(
-            icon: Icons.fingerprint,
-            label: 'ID пользователя',
-            value: user.id,
-            isDark: isDark,
-            theme: theme,
-          ),
+         ProfileInfoRow(
+           icon: Icons.fingerprint,
+           label: 'Фамилия Имя',
+           value: _buildFullName(user),
+           isDark: isDark,
+           theme: theme,
+         ),
           if (user.createdAt != null && user.createdAt!.isNotEmpty) ...[
             const SizedBox(height: 16),
             ProfileInfoRow(
@@ -96,4 +96,15 @@ class UserInfoCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _buildFullName(User user) {
+  final parts = [
+    user.lastName ?? '',
+    user.firstName ?? '',
+  ].where((e) => e.trim().isNotEmpty).toList();
+  if (parts.isEmpty) {
+    return '—';
+  }
+  return parts.join(' ').trim();
 }

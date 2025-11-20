@@ -8,6 +8,8 @@ abstract class AuthRemoteDataSource {
     required String password,
     required String clientName,
     required String clientEmail,
+    String? firstName,
+    String? lastName,
   });
 
   /// Вход пользователя

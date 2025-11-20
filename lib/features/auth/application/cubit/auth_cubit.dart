@@ -59,6 +59,8 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
     required String clientName,
     required String clientEmail,
+    String? firstName,
+    String? lastName,
   }) async {
     emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
     try {
@@ -67,6 +69,8 @@ class AuthCubit extends Cubit<AuthState> {
         password: password,
         clientName: clientName,
         clientEmail: clientEmail,
+        firstName: firstName,
+        lastName: lastName,
       );
       // Сохраняем пользователя после успешной регистрации
       if (user is UserModel) {

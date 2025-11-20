@@ -7,11 +7,13 @@ import 'package:prime_top_front/features/profile/data/models/team_member_model.d
 class TeamRemoteDataSourceImpl implements TeamRemoteDataSource {
   TeamRemoteDataSourceImpl({
     required NetworkClient networkClient,
-    required String baseUrl,
-    required String? Function() getAuthToken,
+    required this.baseUrl,
+    required this.getAuthToken,
   }) : _apiClient = _TeamApiClient(networkClient, baseUrl, getAuthToken);
 
   final _TeamApiClient _apiClient;
+  final String baseUrl;
+  final String? Function() getAuthToken;
 
   @override
   Future<List<TeamMemberModel>> getMembers({required String clientId}) async {

@@ -7,6 +7,8 @@ class UserModel extends User {
     required super.id,
     required super.email,
     required super.client,
+    super.firstName,
+    super.lastName,
     super.createdAt,
     super.token,
     super.expiresIn,
@@ -19,6 +21,8 @@ class UserModel extends User {
       client: ClientModel.fromJson(
         json['client'] as Map<String, dynamic>? ?? {},
       ),
+      firstName: json['first_name'] as String?,
+      lastName: json['last_name'] as String?,
       createdAt: json['created_at'] as String?,
       token: json['token'] as String?,
       expiresIn: json['expires_in'] as int?,
@@ -29,6 +33,8 @@ class UserModel extends User {
     return {
       'id': id,
       'email': email,
+      if (firstName != null) 'first_name': firstName,
+      if (lastName != null) 'last_name': lastName,
       'client': (client as ClientModel).toJson(),
       if (createdAt != null) 'created_at': createdAt,
       if (token != null) 'token': token,
