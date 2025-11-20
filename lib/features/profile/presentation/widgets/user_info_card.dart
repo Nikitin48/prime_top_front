@@ -4,11 +4,7 @@ import 'package:prime_top_front/features/auth/domain/entities/user.dart';
 import 'package:prime_top_front/features/profile/presentation/widgets/profile_info_row.dart';
 
 class UserInfoCard extends StatelessWidget {
-  const UserInfoCard({
-    super.key,
-    required this.user,
-    required this.formatDate,
-  });
+  const UserInfoCard({super.key, required this.user, required this.formatDate});
 
   final User user;
   final String Function(String?) formatDate;
@@ -21,11 +17,25 @@ class UserInfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? ColorName.darkThemeCardBackground : ColorName.cardBackground,
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [
+            ColorName.primary.withValues(alpha: 0.14),
+            isDark ? ColorName.darkThemeCardBackground : Colors.white,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,25 +43,25 @@ class UserInfoCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: ColorName.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
+                  color: ColorName.primary.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   Icons.account_circle,
                   color: ColorName.primary,
-                  size: 24,
+                  size: 28,
                 ),
               ),
               const SizedBox(width: 12),
               Text(
-                'Данные пользователя',
+                'Аккаунт пользователя',
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: isDark
                       ? ColorName.darkThemeTextPrimary
                       : ColorName.textPrimary,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
@@ -65,13 +75,13 @@ class UserInfoCard extends StatelessWidget {
             theme: theme,
           ),
           const SizedBox(height: 16),
-          ProfileInfoRow(
-            icon: Icons.fingerprint,
-            label: 'ID пользователя',
-            value: user.id,
-            isDark: isDark,
-            theme: theme,
-          ),
+         ProfileInfoRow(
+           icon: Icons.fingerprint,
+           label: 'Фамилия Имя',
+           value: _buildFullName(user),
+           isDark: isDark,
+           theme: theme,
+         ),
           if (user.createdAt != null && user.createdAt!.isNotEmpty) ...[
             const SizedBox(height: 16),
             ProfileInfoRow(
@@ -88,3 +98,13 @@ class UserInfoCard extends StatelessWidget {
   }
 }
 
+String _buildFullName(User user) {
+  final parts = [
+    user.lastName ?? '',
+    user.firstName ?? '',
+  ].where((e) => e.trim().isNotEmpty).toList();
+  if (parts.isEmpty) {
+    return '—';
+  }
+  return parts.join(' ').trim();
+}

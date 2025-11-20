@@ -7,6 +7,8 @@ abstract class AuthRepository {
     required String password,
     required String clientName,
     required String clientEmail,
+    String? firstName,
+    String? lastName,
   });
   Future<void> logout();
   void restoreToken(String? token);

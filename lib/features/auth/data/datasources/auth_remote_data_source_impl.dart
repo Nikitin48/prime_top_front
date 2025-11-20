@@ -19,6 +19,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required String clientName,
     required String clientEmail,
+    String? firstName,
+    String? lastName,
   }) async {
     try {
       final body = {
@@ -26,6 +28,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'password': password,
         'client_name': clientName,
         'client_email': clientEmail.toLowerCase(),
+        if (firstName != null && firstName.isNotEmpty) 'first_name': firstName,
+        if (lastName != null && lastName.isNotEmpty) 'last_name': lastName,
       };
 
       final response = await _apiClient.post('/api/auth/register/', body: body);

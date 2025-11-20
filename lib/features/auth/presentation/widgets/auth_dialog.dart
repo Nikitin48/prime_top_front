@@ -20,6 +20,8 @@ class _AuthDialogState extends State<AuthDialog> {
   String _password = '';
   String _companyName = '';
   String _clientEmail = '';
+  String _firstName = '';
+  String _lastName = '';
 
   bool _obscure = true;
   bool _obscureRepeat = true;
@@ -41,6 +43,8 @@ class _AuthDialogState extends State<AuthDialog> {
       _password = '';
       _companyName = '';
       _clientEmail = '';
+      _firstName = '';
+      _lastName = '';
       _passwordController.clear();
       _passwordRepeatController.clear();
     });
@@ -58,6 +62,8 @@ class _AuthDialogState extends State<AuthDialog> {
         password: _password,
         clientName: _companyName.trim(),
         clientEmail: _clientEmail.trim(),
+        firstName: _firstName.trim(),
+        lastName: _lastName.trim(),
       );
     }
   }
@@ -156,8 +162,56 @@ class _AuthDialogState extends State<AuthDialog> {
                           },
                           onSaved: (newValue) => _email = newValue ?? '',
                           enabled: !isLoading,
-                        ),
-                        const SizedBox(height: 12),
+                          ),
+                          const SizedBox(height: 12),
+                          if (_mode == _AuthMode.register) ...[
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'Имя',
+                                          style: Theme.of(context).textTheme.labelLarge,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      TextFormField(
+                                        decoration: makeDecoration(),
+                                        onSaved: (newValue) => _firstName = newValue ?? '',
+                                        enabled: !isLoading,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'Фамилия',
+                                          style: Theme.of(context).textTheme.labelLarge,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      TextFormField(
+                                        decoration: makeDecoration(),
+                                        onSaved: (newValue) => _lastName = newValue ?? '',
+                                        enabled: !isLoading,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                         AnimatedCrossFade(
                           firstChild: const SizedBox.shrink(),
                           secondChild: Column(

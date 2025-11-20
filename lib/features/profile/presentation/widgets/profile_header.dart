@@ -14,7 +14,7 @@ class ProfileHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: ColorName.primary.withOpacity(0.1),
+            color: ColorName.primary.withOpacity(0.12),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(
@@ -31,19 +31,15 @@ class ProfileHeader extends StatelessWidget {
               Text(
                 'Профиль',
                 style: theme.textTheme.headlineMedium?.copyWith(
-                  color: isDark
-                      ? ColorName.darkThemeTextPrimary
-                      : ColorName.textPrimary,
-                  fontWeight: FontWeight.bold,
+                  color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Управление данными пользователя и клиента',
+                'Управление аккаунтом и организацией',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark
-                      ? ColorName.darkThemeTextSecondary
-                      : ColorName.textSecondary,
+                  color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
                 ),
               ),
             ],
@@ -53,4 +49,3 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 }
-
