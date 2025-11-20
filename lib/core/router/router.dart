@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:prime_top_front/core/gen/colors.gen.dart';
+import 'package:prime_top_front/core/theme/themes.dart';
 import 'package:prime_top_front/features/home/presentation/pages/home_page.dart';
 import 'package:prime_top_front/features/home/presentation/widgets/home_drawer.dart';
 import 'package:prime_top_front/core/widgets/app_header.dart';
@@ -36,11 +36,7 @@ final GoRouter appRouter = GoRouter(
                     foregroundColor: Colors.white,
                     flexibleSpace: Container(
                       decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [ColorName.primary, ColorName.secondary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: Themes.primaryGradient,
                       ),
                     ),
                     title: AppHeader(

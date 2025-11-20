@@ -7,6 +7,12 @@ import 'package:prime_top_front/core/theme/theme_text_styles.dart';
 class Themes {
   static List<CustomTheme> themes = [light, dark];
 
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [ColorName.primary, ColorName.secondary],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static CustomTheme light = CustomTheme(
     name: 'Light',
     data: ThemeData(
