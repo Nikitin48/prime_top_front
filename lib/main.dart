@@ -26,6 +26,9 @@ import 'package:prime_top_front/features/cart/data/datasources/cart_remote_data_
 import 'package:prime_top_front/features/home/application/cubit/top_products_cubit.dart';
 import 'package:prime_top_front/features/home/data/top_products_repository_impl.dart';
 import 'package:prime_top_front/features/home/data/datasources/top_products_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/stock/application/cubit/stock_cubit.dart';
+import 'package:prime_top_front/features/stock/data/stock_repository_impl.dart';
+import 'package:prime_top_front/features/stock/data/datasources/stock_remote_data_source_impl.dart';
 
 void main() {
   runApp(const App());
@@ -67,6 +70,13 @@ class App extends StatelessWidget {
       baseUrl: ApiConfig.baseUrl,
     );
     final topProductsRepository = TopProductsRepositoryImpl(topProductsRemoteDataSource);
+
+    // Stock dependencies
+    final stockRemoteDataSource = StockRemoteDataSourceImpl(
+      networkClient: networkClient,
+      baseUrl: ApiConfig.baseUrl,
+    );
+    final stockRepository = StockRepositoryImpl(stockRemoteDataSource);
 
     return MultiBlocProvider(
       providers: [
@@ -125,6 +135,9 @@ class App extends StatelessWidget {
             );
             return CartCubit(cartRepository);
           },
+        ),
+        BlocProvider<StockCubit>(
+          create: (_) => StockCubit(stockRepository),
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(

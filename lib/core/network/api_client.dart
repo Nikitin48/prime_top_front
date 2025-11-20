@@ -111,8 +111,18 @@ abstract class ApiClient {
     }
 
     try {
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      final decoded = jsonDecode(response.body);
+      if (decoded == null) {
+        return {};
+      }
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      throw ParseException('Ответ сервера не является объектом JSON');
     } catch (e) {
+      if (e is ParseException) {
+        rethrow;
+      }
       throw ParseException('Не удалось распарсить ответ сервера: $e');
     }
   }
