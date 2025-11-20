@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/utils/ral_color_helper.dart';
-import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
-import 'package:prime_top_front/features/cart/application/cubit/cart_state.dart';
+import 'package:prime_top_front/core/widgets/add_to_cart_button.dart';
 import 'package:prime_top_front/features/coating_types/domain/entities/coating_type.dart';
 import 'package:prime_top_front/features/products/domain/entities/product.dart';
 import 'package:prime_top_front/features/products/domain/entities/series.dart';
@@ -100,51 +98,10 @@ class ProductInfoSection extends StatelessWidget {
               ],
             ),
           ),
-                BlocBuilder<CartCubit, CartState>(
-                  builder: (context, cartState) {
-                    final itemKey = '${product.id}_null';
-                    final isAddingThisItem = cartState.isAddingItem && cartState.addingItemKey == itemKey;
-                    
-                    return Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: ColorName.primary,
-                      ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: isAddingThisItem
-                        ? null
-                        : () {
-                            context.read<CartCubit>().addItemToCart(
-                                  productId: product.id,
-                                  seriesId: null,
-                                  quantity: 1,
-                                );
-                          },
-                    borderRadius: BorderRadius.circular(28),
-                    child: Center(
-                      child: isAddingThisItem
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : Icon(
-                              Icons.shopping_cart_outlined,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                    ),
-                  ),
-                ),
-              );
-            },
+          AddToCartButton(
+            productId: product.id,
+            size: 56,
+            iconSize: 24,
           ),
         ],
       ),

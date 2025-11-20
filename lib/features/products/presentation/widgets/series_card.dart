@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
-import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
-import 'package:prime_top_front/features/cart/application/cubit/cart_state.dart';
+import 'package:prime_top_front/core/widgets/add_to_cart_button.dart';
 import 'package:prime_top_front/features/products/domain/entities/series.dart';
 import 'package:prime_top_front/features/products/presentation/widgets/analyses_expansion_tile.dart';
 
@@ -11,12 +9,10 @@ class SeriesCard extends StatelessWidget {
     super.key,
     required this.series,
     required this.productId,
-    this.onAddToCart,
   });
 
   final Series series;
   final int productId;
-  final VoidCallback? onAddToCart;
 
   @override
   Widget build(BuildContext context) {
@@ -57,46 +53,15 @@ class SeriesCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (onAddToCart != null)
-                      BlocBuilder<CartCubit, CartState>(
-                        builder: (context, cartState) {
-                          final itemKey = '${productId}_${series.id}';
-                          final isAddingThisItem = cartState.isAddingItem && cartState.addingItemKey == itemKey;
-                          
-                          return Container(
-                            width: 48,
-                            height: 48,
-                            margin: const EdgeInsets.only(left: 12),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: ColorName.primary,
-                            ),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: InkWell(
-                                onTap: isAddingThisItem ? null : onAddToCart,
-                                borderRadius: BorderRadius.circular(24),
-                                child: Center(
-                                  child: isAddingThisItem
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.shopping_cart_outlined,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12),
+                      child: AddToCartButton(
+                        productId: productId,
+                        seriesId: series.id,
+                        size: 48,
+                        iconSize: 20,
                       ),
+                    ),
                   ],
                 ),
                 if (series.productionDate != null || series.expireDate != null) ...[

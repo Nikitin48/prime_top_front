@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:prime_top_front/core/theme/themes.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 import 'package:prime_top_front/features/auth/presentation/widgets/auth_dialog.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';

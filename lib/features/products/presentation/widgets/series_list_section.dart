@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
-import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
 import 'package:prime_top_front/features/products/domain/entities/series.dart';
 import 'package:prime_top_front/features/products/presentation/widgets/series_card.dart';
 
@@ -70,13 +68,6 @@ class SeriesListSection extends StatelessWidget {
             return SeriesCard(
               series: currentSeries,
               productId: productId,
-              onAddToCart: () {
-                context.read<CartCubit>().addItemToCart(
-                      productId: productId,
-                      seriesId: currentSeries.id,
-                      quantity: 1,
-                    );
-              },
             );
           },
         ),

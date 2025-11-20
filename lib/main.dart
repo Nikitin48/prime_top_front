@@ -23,6 +23,9 @@ import 'package:prime_top_front/features/orders/data/datasources/orders_remote_d
 import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
 import 'package:prime_top_front/features/cart/data/cart_repository_impl.dart';
 import 'package:prime_top_front/features/cart/data/datasources/cart_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/home/application/cubit/top_products_cubit.dart';
+import 'package:prime_top_front/features/home/data/top_products_repository_impl.dart';
+import 'package:prime_top_front/features/home/data/datasources/top_products_remote_data_source_impl.dart';
 
 void main() {
   runApp(const App());
@@ -58,6 +61,13 @@ class App extends StatelessWidget {
     );
     final productsRepository = ProductsRepositoryImpl(productsRemoteDataSource);
 
+    // Top products dependencies
+    final topProductsRemoteDataSource = TopProductsRemoteDataSourceImpl(
+      networkClient: networkClient,
+      baseUrl: ApiConfig.baseUrl,
+    );
+    final topProductsRepository = TopProductsRepositoryImpl(topProductsRemoteDataSource);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
@@ -73,6 +83,9 @@ class App extends StatelessWidget {
         ),
         BlocProvider<ProductDetailCubit>(
           create: (_) => ProductDetailCubit(productsRepository),
+        ),
+        BlocProvider<TopProductsCubit>(
+          create: (_) => TopProductsCubit(topProductsRepository),
         ),
         BlocProvider<OrdersCubit>(
           create: (context) {
