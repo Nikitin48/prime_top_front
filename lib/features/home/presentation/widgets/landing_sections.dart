@@ -32,7 +32,7 @@ class HomeHeroSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'PrimeTop — порошковые покрытия и цифровой сервис',
+                    'PrimeTop — промышленные лакокрасочные материалы и защитные покрытия',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -40,8 +40,8 @@ class HomeHeroSection extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Разрабатываем и производим покрытия для фасадов, индустрии и спецэффектов. '
-                    'Своя лаборатория, складская сеть и менеджеры, которые ведут проект от первой заявки до поставки.',
+                    'Разрабатываем и производим полимерные ЛКМ для металла и металлической упаковки. '
+                    'Помогаем подобрать систему покрытия под ваш объект, сопровождаем внедрение и обеспечиваем стабильные поставки по России и СНГ.',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.white.withValues(alpha: 0.9),
                     ),

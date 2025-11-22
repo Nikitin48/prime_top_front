@@ -17,9 +17,19 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   @override
   Future<OrdersResponseModel> getOrders({
     String? status,
+    String? search,
+    String? client,
+    String? product,
     String? createdFrom,
     String? createdTo,
+    String? shippedFrom,
+    String? shippedTo,
+    String? deliveredFrom,
+    String? deliveredTo,
+    String? sortBy,
+    String? sortDirection,
     int? limit,
+    int? offset,
     int? recent,
   }) async {
     try {
@@ -27,14 +37,44 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
       if (status != null && status.isNotEmpty) {
         queryParams['status'] = status;
       }
+      if (search != null && search.isNotEmpty) {
+        queryParams['search'] = search;
+      }
+      if (client != null && client.isNotEmpty) {
+        queryParams['client'] = client;
+      }
+      if (product != null && product.isNotEmpty) {
+        queryParams['product'] = product;
+      }
       if (createdFrom != null && createdFrom.isNotEmpty) {
         queryParams['created_from'] = createdFrom;
       }
       if (createdTo != null && createdTo.isNotEmpty) {
         queryParams['created_to'] = createdTo;
       }
+      if (shippedFrom != null && shippedFrom.isNotEmpty) {
+        queryParams['shipped_from'] = shippedFrom;
+      }
+      if (shippedTo != null && shippedTo.isNotEmpty) {
+        queryParams['shipped_to'] = shippedTo;
+      }
+      if (deliveredFrom != null && deliveredFrom.isNotEmpty) {
+        queryParams['delivered_from'] = deliveredFrom;
+      }
+      if (deliveredTo != null && deliveredTo.isNotEmpty) {
+        queryParams['delivered_to'] = deliveredTo;
+      }
+      if (sortBy != null && sortBy.isNotEmpty) {
+        queryParams['sort_by'] = sortBy;
+      }
+      if (sortDirection != null && sortDirection.isNotEmpty) {
+        queryParams['sort_dir'] = sortDirection;
+      }
       if (limit != null) {
         queryParams['limit'] = limit.toString();
+      }
+      if (offset != null) {
+        queryParams['offset'] = offset.toString();
       }
       if (recent != null) {
         queryParams['recent'] = recent.toString();
