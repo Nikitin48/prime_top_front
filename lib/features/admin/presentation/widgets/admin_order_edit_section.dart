@@ -33,15 +33,12 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
     _cancelReasonController.text = widget.order.cancelReason ?? '';
   }
 
-  /// Нормализует статус из русского текста в английский ключ для DropdownButton
   String? _normalizeStatus(String status) {
-    // Если статус уже английский ключ, возвращаем как есть
     const englishKeys = ['created', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
     if (englishKeys.contains(status.toLowerCase())) {
       return status.toLowerCase();
     }
 
-    // Маппинг русского текста в английские ключи
     switch (status.toLowerCase()) {
       case 'создан':
         return 'created';
@@ -59,7 +56,6 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
       case 'отменено':
         return 'cancelled';
       default:
-        // Если статус не распознан, возвращаем null чтобы показать пустое значение
         return null;
     }
   }

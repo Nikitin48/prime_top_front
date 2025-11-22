@@ -22,7 +22,6 @@ class OrderItemsSection extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Если позиций 0, не показываем блок
     if (items.isEmpty) {
       return const SizedBox.shrink();
     }

@@ -57,10 +57,8 @@ class OrdersSummarySection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    // Фильтруем элементы с нулевым количеством позиций
     final itemsWithQuantity = summary.where((item) => item.totalQuantity > 0).toList();
 
-    // Если все позиции равны 0, не показываем блок
     if (itemsWithQuantity.isEmpty) {
       return const SizedBox.shrink();
     }

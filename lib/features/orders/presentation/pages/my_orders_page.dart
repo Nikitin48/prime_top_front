@@ -206,32 +206,116 @@ class _TabsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tabs = const [
-      ('all', 'Все заказы'),
-      ('current', 'Текущие'),
-      ('history', 'История'),
-      ('cancelled', 'Отменённые'),
-    ];
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: tabs
-          .map(
-            (tab) => ChoiceChip(
-              label: Text(tab.$2),
-              selected: state.tab == tab.$1,
-              onSelected: (_) {
-                final cubit = context.read<OrdersCubit>();
-                cubit.loadOrders(
-                  tab: tab.$1,
-                  status: null,
-                  offset: 0,
-                  limit: 9999,
-                );
-              },
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? ColorName.darkThemeCardBackground : ColorName.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+      ),
+      child: Row(
+        children: [
+          _TabButton(
+            label: 'Все заказы',
+            isActive: state.tab == 'all',
+            onTap: () {
+              final cubit = context.read<OrdersCubit>();
+              cubit.loadOrders(
+                tab: 'all',
+                status: null,
+                offset: 0,
+                limit: 9999,
+              );
+            },
+          ),
+          _TabButton(
+            label: 'Текущие',
+            isActive: state.tab == 'current',
+            onTap: () {
+              final cubit = context.read<OrdersCubit>();
+              cubit.loadOrders(
+                tab: 'current',
+                status: null,
+                offset: 0,
+                limit: 9999,
+              );
+            },
+          ),
+          _TabButton(
+            label: 'История',
+            isActive: state.tab == 'history',
+            onTap: () {
+              final cubit = context.read<OrdersCubit>();
+              cubit.loadOrders(
+                tab: 'history',
+                status: null,
+                offset: 0,
+                limit: 9999,
+              );
+            },
+          ),
+          _TabButton(
+            label: 'Отмененные',
+            isActive: state.tab == 'cancelled',
+            onTap: () {
+              final cubit = context.read<OrdersCubit>();
+              cubit.loadOrders(
+                tab: 'cancelled',
+                status: null,
+                offset: 0,
+                limit: 9999,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TabButton extends StatelessWidget {
+  const _TabButton({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            color: isActive
+                ? (isDark ? ColorName.darkThemePrimary : ColorName.primary)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: isActive
+                    ? Colors.white
+                    : (isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary),
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
+              ),
             ),
-          )
-          .toList(),
+          ),
+        ),
+      ),
     );
   }
 }
