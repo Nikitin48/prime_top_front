@@ -61,7 +61,12 @@ class AppHeader extends StatelessWidget {
                     ),
                   ),
                   onSubmitted: (value) {
-                    // Implement search logic here
+                    if (value.trim().isNotEmpty) {
+                      context.goNamed(
+                        'search',
+                        queryParameters: {'q': value.trim()},
+                      );
+                    }
                   },
                 ),
               ),

@@ -16,6 +16,7 @@ import 'package:prime_top_front/features/coating_types/application/cubit/menu_st
 import 'package:prime_top_front/features/coating_types/presentation/widgets/coating_types_menu.dart';
 import 'package:prime_top_front/features/products/presentation/pages/product_detail_page.dart';
 import 'package:prime_top_front/features/products/presentation/pages/products_by_coating_type_page.dart';
+import 'package:prime_top_front/features/products/presentation/pages/search_results_page.dart';
 import 'package:prime_top_front/features/cart/presentation/pages/cart_page.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -159,6 +160,19 @@ final GoRouter appRouter = GoRouter(
                 coatingTypeId: coatingTypeId,
                 coatingTypeName: coatingTypeName,
               ),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/search',
+          name: 'search',
+          pageBuilder: (context, state) {
+            final query = state.uri.queryParameters['q'] ?? '';
+            if (query.isEmpty) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            return NoTransitionPage(
+              child: SearchResultsPage(query: query),
             );
           },
         ),

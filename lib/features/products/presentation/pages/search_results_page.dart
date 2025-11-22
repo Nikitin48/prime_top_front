@@ -3,30 +3,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/features/products/application/cubit/products_cubit.dart';
 import 'package:prime_top_front/features/products/presentation/widgets/products_list_widget.dart';
 
-class ProductsByCoatingTypePage extends StatefulWidget {
-  const ProductsByCoatingTypePage({
+class SearchResultsPage extends StatefulWidget {
+  const SearchResultsPage({
     super.key,
-    required this.coatingTypeId,
-    this.coatingTypeName,
+    required this.query,
   });
 
-  final int coatingTypeId;
-  final String? coatingTypeName;
+  final String query;
 
   @override
-  State<ProductsByCoatingTypePage> createState() => _ProductsByCoatingTypePageState();
+  State<SearchResultsPage> createState() => _SearchResultsPageState();
 }
 
-class _ProductsByCoatingTypePageState extends State<ProductsByCoatingTypePage> {
-  static const int _pageSize = 20;
-
+class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         final cubit = context.read<ProductsCubit>();
-        if (cubit.state.selectedCoatingTypeId != widget.coatingTypeId) {
+        if (cubit.state.searchQuery != widget.query) {
           cubit.clearProducts();
         }
       }
@@ -34,8 +30,8 @@ class _ProductsByCoatingTypePageState extends State<ProductsByCoatingTypePage> {
   }
 
   void _loadProducts(int page, int pageSize) {
-    context.read<ProductsCubit>().loadProductsByCoatingType(
-      widget.coatingTypeId,
+    context.read<ProductsCubit>().searchProducts(
+      widget.query,
       limit: pageSize,
       offset: page * pageSize,
     );
@@ -44,9 +40,9 @@ class _ProductsByCoatingTypePageState extends State<ProductsByCoatingTypePage> {
   @override
   Widget build(BuildContext context) {
     return ProductsListWidget(
-      title: widget.coatingTypeName ?? 'Товары',
+      title: 'Результаты поиска',
+      subtitle: 'По запросу: "${widget.query}"',
       onLoadProducts: _loadProducts,
-      pageSize: _pageSize,
     );
   }
 }

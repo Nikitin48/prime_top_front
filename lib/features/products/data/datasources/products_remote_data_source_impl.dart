@@ -84,6 +84,53 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
   }
 
   @override
+  Future<ProductsDataResponse> searchProducts({
+    required String query,
+    int? limit,
+    int? offset,
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'q': query,
+      };
+      if (limit != null) {
+        queryParams['limit'] = limit.toString();
+      }
+      if (offset != null) {
+        queryParams['offset'] = offset.toString();
+      }
+
+      final queryString = '?${queryParams.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}').join('&')}';
+
+      final path = '/api/products/search/$queryString'.replaceAll('//', '/');
+      final response = await _apiClient.get(path);
+
+      final count = response['count'] as int?;
+      if (count == null) {
+        throw ParseException('Отсутствует поле count в ответе сервера');
+      }
+
+      final results = response['results'] as List<dynamic>?;
+      if (results == null) {
+        throw ParseException('Отсутствует поле results в ответе сервера');
+      }
+
+      final products = results
+          .map((json) => ProductModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      return ProductsDataResponse(
+        products: products,
+        count: count,
+      );
+    } on NetworkException {
+      rethrow;
+    } catch (e) {
+      throw ParseException('Ошибка при поиске продуктов: $e');
+    }
+  }
+
+  @override
   Future<ProductDetailModel> getProductDetail(int productId) async {
     try {
       final path = '/api/products/$productId/';

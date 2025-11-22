@@ -23,6 +23,12 @@ abstract class ProductsRemoteDataSource {
     int? offset,
   });
 
+  Future<ProductsDataResponse> searchProducts({
+    required String query,
+    int? limit,
+    int? offset,
+  });
+
   Future<ProductDetailModel> getProductDetail(int productId);
 }
 

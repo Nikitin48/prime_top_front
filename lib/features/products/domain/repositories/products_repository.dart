@@ -23,6 +23,12 @@ abstract class ProductsRepository {
     int? offset,
   });
 
+  Future<ProductsResponse> searchProducts({
+    required String query,
+    int? limit,
+    int? offset,
+  });
+
   Future<ProductDetail> getProductDetail(int productId);
 }
 

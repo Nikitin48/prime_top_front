@@ -42,6 +42,29 @@ class ProductsRepositoryImpl implements ProductsRepository {
   }
 
   @override
+  Future<ProductsResponse> searchProducts({
+    required String query,
+    int? limit,
+    int? offset,
+  }) async {
+    try {
+      final dataResponse = await _remoteDataSource.searchProducts(
+        query: query,
+        limit: limit,
+        offset: offset,
+      );
+      return ProductsResponse(
+        products: dataResponse.products.map((model) => model.toEntity()).toList(),
+        count: dataResponse.count,
+      );
+    } on NetworkException catch (e) {
+      throw Exception('Ошибка сети: ${e.message}');
+    } catch (e) {
+      throw Exception('Неожиданная ошибка при поиске продуктов: $e');
+    }
+  }
+
+  @override
   Future<ProductDetail> getProductDetail(int productId) async {
     try {
       final dataResponse = await _remoteDataSource.getProductDetail(productId);
