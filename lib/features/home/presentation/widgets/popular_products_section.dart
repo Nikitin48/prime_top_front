@@ -5,7 +5,7 @@ import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/features/home/application/cubit/top_products_cubit.dart';
 import 'package:prime_top_front/features/home/application/cubit/top_products_state.dart';
 import 'package:prime_top_front/features/home/domain/entities/popular_product.dart';
-import 'package:prime_top_front/features/products/presentation/widgets/product_card.dart';
+import 'package:prime_top_front/core/widgets/product_card.dart';
 
 class PopularProductsSection extends StatefulWidget {
   const PopularProductsSection({super.key});

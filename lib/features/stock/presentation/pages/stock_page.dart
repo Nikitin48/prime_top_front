@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
+import 'package:prime_top_front/core/widgets/pagination_controls.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 import 'package:prime_top_front/features/stock/application/cubit/stock_cubit.dart';
@@ -318,54 +319,27 @@ class _StockPageState extends State<StockPage> {
     final totalCount = state.response!.publicStocks.totalCount;
     final totalPages = (totalCount / _pageSize).ceil();
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark
-            ? ColorName.darkThemeCardBackground
-            : ColorName.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark
-              ? ColorName.darkThemeBorderSoft
-              : ColorName.borderSoft,
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: _currentPage > 0
-                ? () {
-                    setState(() {
-                      _currentPage--;
-                    });
-                    _loadStocks();
-                  }
-                : null,
-            icon: const Icon(Icons.chevron_left),
-          ),
-          Text(
-            'Страница ${_currentPage + 1} из $totalPages',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: isDark
-                  ? ColorName.darkThemeTextPrimary
-                  : ColorName.textPrimary,
-            ),
-          ),
-          IconButton(
-            onPressed: _currentPage < totalPages - 1
-                ? () {
-                    setState(() {
-                      _currentPage++;
-                    });
-                    _loadStocks();
-                  }
-                : null,
-            icon: const Icon(Icons.chevron_right),
-          ),
-        ],
-      ),
+    return PaginationControls(
+      currentPage: _currentPage,
+      totalPages: totalPages,
+      pageSize: _pageSize,
+      totalCount: totalCount,
+      onPreviousPage: _currentPage > 0
+          ? () {
+              setState(() {
+                _currentPage--;
+              });
+              _loadStocks();
+            }
+          : null,
+      onNextPage: _currentPage < totalPages - 1
+          ? () {
+              setState(() {
+                _currentPage++;
+              });
+              _loadStocks();
+            }
+          : null,
     );
   }
 }

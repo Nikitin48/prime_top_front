@@ -5,6 +5,7 @@ class ProductsState extends Equatable {
   const ProductsState({
     this.products = const [],
     this.isLoading = false,
+    this.isLoadingMore = false,
     this.errorMessage,
     this.selectedCoatingTypeId,
     this.totalCount = 0,
@@ -12,6 +13,7 @@ class ProductsState extends Equatable {
 
   final List<Product> products;
   final bool isLoading;
+  final bool isLoadingMore;
   final String? errorMessage;
   final int? selectedCoatingTypeId;
   final int totalCount;
@@ -19,6 +21,7 @@ class ProductsState extends Equatable {
   ProductsState copyWith({
     List<Product>? products,
     bool? isLoading,
+    bool? isLoadingMore,
     String? errorMessage,
     int? selectedCoatingTypeId,
     int? totalCount,
@@ -26,6 +29,7 @@ class ProductsState extends Equatable {
     return ProductsState(
       products: products ?? this.products,
       isLoading: isLoading ?? this.isLoading,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       errorMessage: errorMessage,
       selectedCoatingTypeId: selectedCoatingTypeId ?? this.selectedCoatingTypeId,
       totalCount: totalCount ?? this.totalCount,
@@ -33,6 +37,6 @@ class ProductsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [products, isLoading, errorMessage, selectedCoatingTypeId, totalCount];
+  List<Object?> get props => [products, isLoading, isLoadingMore, errorMessage, selectedCoatingTypeId, totalCount];
 }
 

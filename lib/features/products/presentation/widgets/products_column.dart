@@ -120,7 +120,23 @@ class ProductsColumn extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    final coatingTypeId = state.selectedCoatingTypeId;
+                    if (coatingTypeId != null) {
+                      // Получаем название типа покрытия из первого продукта
+                      final coatingTypeName = state.products.isNotEmpty
+                          ? state.products.first.coatingType.name
+                          : null;
+                      context.read<MenuCubit>().closeMenu();
+                      final uri = Uri(
+                        path: '/products/coating-type/$coatingTypeId',
+                        queryParameters: coatingTypeName != null
+                            ? {'name': coatingTypeName}
+                            : null,
+                      );
+                      context.go(uri.toString());
+                    }
+                  },
                   child: Text(
                     'Показать все',
                     style: theme.textTheme.bodyMedium?.copyWith(

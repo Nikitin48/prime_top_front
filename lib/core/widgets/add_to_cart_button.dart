@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 import 'package:prime_top_front/features/auth/presentation/widgets/auth_dialog.dart';
@@ -40,22 +39,6 @@ class AddToCartButton extends StatelessWidget {
       seriesId: seriesId,
       quantity: 1,
     );
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Товар добавлен в корзину'),
-          duration: const Duration(seconds: 2),
-          action: SnackBarAction(
-            label: 'Перейти',
-            textColor: Colors.white,
-            onPressed: () {
-              context.go('/cart');
-            },
-          ),
-        ),
-      );
-    }
   }
 
   @override

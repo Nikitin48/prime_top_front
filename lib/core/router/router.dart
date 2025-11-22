@@ -15,6 +15,7 @@ import 'package:prime_top_front/features/coating_types/application/cubit/menu_cu
 import 'package:prime_top_front/features/coating_types/application/cubit/menu_state.dart';
 import 'package:prime_top_front/features/coating_types/presentation/widgets/coating_types_menu.dart';
 import 'package:prime_top_front/features/products/presentation/pages/product_detail_page.dart';
+import 'package:prime_top_front/features/products/presentation/pages/products_by_coating_type_page.dart';
 import 'package:prime_top_front/features/cart/presentation/pages/cart_page.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -137,6 +138,27 @@ final GoRouter appRouter = GoRouter(
             }
             return NoTransitionPage(
               child: ProductDetailPage(productId: productId),
+            );
+          },
+        ),
+        GoRoute(
+          path: '/products/coating-type/:coatingTypeId',
+          name: 'products_by_coating_type',
+          pageBuilder: (context, state) {
+            final coatingTypeIdParam = state.pathParameters['coatingTypeId'];
+            if (coatingTypeIdParam == null) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            final coatingTypeId = int.tryParse(coatingTypeIdParam);
+            if (coatingTypeId == null) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            final coatingTypeName = state.uri.queryParameters['name'];
+            return NoTransitionPage(
+              child: ProductsByCoatingTypePage(
+                coatingTypeId: coatingTypeId,
+                coatingTypeName: coatingTypeName,
+              ),
             );
           },
         ),
