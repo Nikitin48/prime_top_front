@@ -57,7 +57,15 @@ class OrdersSummarySection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final cards = summary.map((item) {
+    // Фильтруем элементы с нулевым количеством позиций
+    final itemsWithQuantity = summary.where((item) => item.totalQuantity > 0).toList();
+
+    // Если все позиции равны 0, не показываем блок
+    if (itemsWithQuantity.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final cards = itemsWithQuantity.map((item) {
       final statusColor = _getStatusColor(item.status, isDark);
       return Container(
         padding: const EdgeInsets.all(14),
@@ -150,45 +158,6 @@ class OrdersSummarySection extends StatelessWidget {
           return cards[index ~/ 2];
         }),
       ],
-    );
-  }
-}
-
-class _SummaryRow extends StatelessWidget {
-  const _SummaryRow({
-    required this.label,
-    required this.value,
-    required this.isDark,
-  });
-
-  final String label;
-  final String value;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
-            ),
-          ),
-          Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

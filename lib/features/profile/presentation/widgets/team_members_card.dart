@@ -78,7 +78,7 @@ class TeamMembersCard extends StatelessWidget {
               children: members.map((member) {
                 final isCurrent = member.id == currentUserId;
                 final name = [member.firstName, member.lastName]
-                    .where((e) => e != null && e!.isNotEmpty)
+                    .where((e) => e != null && e.isNotEmpty)
                     .map((e) => e!)
                     .join(' ');
                 return Container(

@@ -19,6 +19,7 @@ class AdminOrderEditSection extends StatefulWidget {
 
 class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
   String? _selectedStatus;
+  String? _originalNormalizedStatus;
   DateTime? _selectedShippedDate;
   DateTime? _selectedDeliveredDate;
   final _cancelReasonController = TextEditingController();
@@ -27,8 +28,40 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
   @override
   void initState() {
     super.initState();
-    _selectedStatus = widget.order.status;
+    _originalNormalizedStatus = _normalizeStatus(widget.order.status);
+    _selectedStatus = _originalNormalizedStatus;
     _cancelReasonController.text = widget.order.cancelReason ?? '';
+  }
+
+  /// Нормализует статус из русского текста в английский ключ для DropdownButton
+  String? _normalizeStatus(String status) {
+    // Если статус уже английский ключ, возвращаем как есть
+    const englishKeys = ['created', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    if (englishKeys.contains(status.toLowerCase())) {
+      return status.toLowerCase();
+    }
+
+    // Маппинг русского текста в английские ключи
+    switch (status.toLowerCase()) {
+      case 'создан':
+        return 'created';
+      case 'ожидает подтверждения':
+        return 'pending';
+      case 'в производстве':
+        return 'processing';
+      case 'отгружен':
+        return 'shipped';
+      case 'доставлен':
+      case 'доставлено':
+        return 'delivered';
+      case 'отменён':
+      case 'отменен':
+      case 'отменено':
+        return 'cancelled';
+      default:
+        // Если статус не распознан, возвращаем null чтобы показать пустое значение
+        return null;
+    }
   }
 
   @override
@@ -45,7 +78,7 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
     });
 
     try {
-      final status = _selectedStatus != widget.order.status ? _selectedStatus : null;
+      final status = _selectedStatus != _originalNormalizedStatus ? _selectedStatus : null;
       String? shippedAt;
       String? deliveredAt;
       String? cancelReason;
@@ -154,6 +187,7 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
             value: _selectedStatus,
             decoration: InputDecoration(
               labelText: 'Статус заказа',
+              hintText: _selectedStatus == null ? 'Выберите статус' : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
