@@ -15,15 +15,15 @@ class OrdersSummarySection extends StatelessWidget {
       case 'created':
         return 'Создан';
       case 'pending':
-        return 'В ожидании';
+        return 'Ожидает подтверждения';
       case 'processing':
-        return 'В обработке';
+        return 'В производстве';
       case 'shipped':
-        return 'Отправлен';
+        return 'Отгружен';
       case 'delivered':
         return 'Доставлен';
       case 'cancelled':
-        return 'Отменен';
+        return 'Отменён';
       default:
         return status;
     }
@@ -57,85 +57,135 @@ class OrdersSummarySection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark
-            ? ColorName.darkThemeCardBackground
-            : ColorName.cardBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark
-              ? ColorName.darkThemeBorderSoft
-              : ColorName.borderSoft,
+    final cards = summary.map((item) {
+      final statusColor = _getStatusColor(item.status, isDark);
+      return Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isDark ? ColorName.darkThemeCardBackground : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft,
+          ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 16,
+                    offset: const Offset(0, 10),
+                    spreadRadius: -6,
+                  ),
+                ],
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          children: [
+            Container(
+              width: 10,
+              height: 10,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                color: statusColor,
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _getStatusText(item.status),
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: statusColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      _Tag(text: 'Заказов: ${item.ordersCount}'),
+                      const SizedBox(width: 8),
+                      _Tag(text: 'Серий: ${item.seriesCount}'),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Общий объём: ${item.totalQuantity.toStringAsFixed(0)}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.trending_up,
+              color: isDark ? ColorName.darkThemeTextSecondary : ColorName.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Сводка по статусам',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...List.generate(cards.length * 2 - 1, (index) {
+          if (index.isOdd) {
+            return const SizedBox(height: 12);
+          }
+          return cards[index ~/ 2];
+        }),
+      ],
+    );
+  }
+}
+
+class _SummaryRow extends StatelessWidget {
+  const _SummaryRow({
+    required this.label,
+    required this.value,
+    required this.isDark,
+  });
+
+  final String label;
+  final String value;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Сводная статистика',
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: isDark
-                  ? ColorName.darkThemeTextPrimary
-                  : ColorName.textPrimary,
-              fontWeight: FontWeight.bold,
+            label,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
             ),
           ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: summary.map((item) {
-              final statusColor = _getStatusColor(item.status, isDark);
-              return Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: statusColor.withOpacity(0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getStatusText(item.status),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: statusColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Заказов: ${item.ordersCount}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: isDark
-                            ? ColorName.darkThemeTextSecondary
-                            : ColorName.textSecondary,
-                      ),
-                    ),
-                    Text(
-                      'Серий: ${item.seriesCount}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: isDark
-                            ? ColorName.darkThemeTextSecondary
-                            : ColorName.textSecondary,
-                      ),
-                    ),
-                    Text(
-                      'Количество: ${item.totalQuantity.toStringAsFixed(0)}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: isDark
-                            ? ColorName.darkThemeTextSecondary
-                            : ColorName.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+          Text(
+            value,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
@@ -143,3 +193,26 @@ class OrdersSummarySection extends StatelessWidget {
   }
 }
 
+class _Tag extends StatelessWidget {
+  const _Tag({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? ColorName.darkThemeBackgroundSecondary : ColorName.backgroundSecondary,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
+        ),
+      ),
+    );
+  }
+}

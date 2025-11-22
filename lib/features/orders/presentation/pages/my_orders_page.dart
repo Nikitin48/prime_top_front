@@ -4,7 +4,33 @@ import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
 import 'package:prime_top_front/features/orders/application/cubit/orders_cubit.dart';
 import 'package:prime_top_front/features/orders/application/cubit/orders_state.dart';
+import 'package:prime_top_front/features/orders/domain/entities/order.dart';
+import 'package:prime_top_front/features/orders/domain/entities/orders_response.dart';
 import 'package:prime_top_front/features/orders/presentation/widgets/order_card.dart';
+import 'package:prime_top_front/features/orders/presentation/widgets/orders_summary_section.dart';
+
+bool _isDelivered(String status) {
+  final normalized = status.toLowerCase();
+  return normalized == 'delivered' || normalized == 'доставлено' || normalized == 'доставлен';
+}
+
+bool _isCancelled(String status) {
+  final normalized = status.toLowerCase();
+  return normalized == 'cancelled' || normalized == 'canceled' || normalized == 'отменено' || normalized == 'отменен';
+}
+
+List<Order> _filterOrdersByTab(List<Order> orders, String tab) {
+  switch (tab) {
+    case 'all':
+      return orders;
+    case 'history':
+      return orders.where((o) => _isDelivered(o.status)).toList();
+    case 'cancelled':
+      return orders.where((o) => _isCancelled(o.status)).toList();
+    default:
+      return orders.where((o) => !_isDelivered(o.status) && !_isCancelled(o.status)).toList();
+  }
+}
 
 class MyOrdersPage extends StatefulWidget {
   const MyOrdersPage({super.key});
@@ -14,24 +40,34 @@ class MyOrdersPage extends StatefulWidget {
 }
 
 class _MyOrdersPageState extends State<MyOrdersPage> {
+  final _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<OrdersCubit>().loadOrders();
+        context.read<OrdersCubit>().loadOrders(limit: 9999, offset: 0);
       }
     });
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const _MyOrdersView();
+    return _MyOrdersView(scrollController: _scrollController);
   }
 }
 
 class _MyOrdersView extends StatelessWidget {
-  const _MyOrdersView();
+  const _MyOrdersView({required this.scrollController});
+
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -41,111 +77,121 @@ class _MyOrdersView extends StatelessWidget {
     return ScreenWrapper(
       child: BlocBuilder<OrdersCubit, OrdersState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: const Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
+          if (state.isLoading && state.ordersResponse == null) {
+            return const Center(child: Padding(padding: EdgeInsets.all(48), child: CircularProgressIndicator()));
           }
 
-          if (state.errorMessage != null) {
+          if (state.errorMessage != null && state.ordersResponse == null) {
             return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 48,
-                        color: ColorName.danger,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        state.errorMessage!,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: ColorName.danger,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<OrdersCubit>().loadOrders();
-                        },
-                        child: const Text('Повторить'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-
-          if (state.ordersResponse == null || state.ordersResponse!.orders.isEmpty) {
-            return Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Text(
-                    'У вас пока нет заказов',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: isDark
-                          ? ColorName.darkThemeTextSecondary
-                          : ColorName.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            );
-          }
-
-          final ordersResponse = state.ordersResponse!;
-
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1200),
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(32.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Icon(Icons.error_outline, size: 48, color: ColorName.danger),
+                    const SizedBox(height: 16),
                     Text(
-                      'Мои заказы',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: isDark
-                            ? ColorName.darkThemeTextPrimary
-                            : ColorName.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      state.errorMessage!,
+                      style: theme.textTheme.bodyLarge?.copyWith(color: ColorName.danger),
+                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Всего заказов: ${ordersResponse.totalCount}',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: isDark
-                            ? ColorName.darkThemeTextSecondary
-                            : ColorName.textSecondary,
-                      ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => context.read<OrdersCubit>().loadOrders(limit: 9999, offset: 0),
+                      child: const Text('Попробовать снова'),
                     ),
-                    const SizedBox(height: 32),
-                    ...ordersResponse.orders.map((order) {
-                      return OrderCard(order: order);
-                    }),
                   ],
                 ),
               ),
-            ),
+            );
+          }
+
+          final ordersResponse = state.ordersResponse;
+          if (ordersResponse == null) {
+            return const SizedBox.shrink();
+          }
+
+          final filteredOrders = _filterOrdersByTab(ordersResponse.orders, state.tab);
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 1200;
+              final sidebarWidth = isWide ? 320.0 : constraints.maxWidth;
+
+              final content = Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _OrdersHero(totalOrders: ordersResponse.totalCount),
+                          const SizedBox(height: 16),
+                          _TabsRow(state: state),
+                          const SizedBox(height: 12),
+                          if (!isWide)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: _Sidebar(
+                                ordersResponse: ordersResponse,
+                              ),
+                            ),
+                          if (filteredOrders.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Text(
+                                'В этой вкладке пока нет заказов',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
+                                ),
+                              ),
+                            )
+                          else ...[
+                            _OrdersGrid(
+                              orders: filteredOrders,
+                              isWide: isWide,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (state.isLoading) ...[
+                            const SizedBox(height: 12),
+                            const Center(child: CircularProgressIndicator()),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (isWide)
+                    SizedBox(
+                      width: sidebarWidth,
+                      child: AnimatedBuilder(
+                        animation: scrollController,
+                        builder: (context, child) {
+                          final offset = -scrollController.offset;
+                          return Transform.translate(
+                            offset: Offset(0, offset),
+                            child: child,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 20, 20, 20),
+                          child: _Sidebar(
+                            ordersResponse: ordersResponse,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+
+              return Container(
+                color: isDark ? ColorName.darkThemeBackground : ColorName.backgroundSecondary.withOpacity(0.3),
+                child: content,
+              );
+            },
           );
         },
       ),
@@ -153,4 +199,193 @@ class _MyOrdersView extends StatelessWidget {
   }
 }
 
+class _TabsRow extends StatelessWidget {
+  const _TabsRow({required this.state});
 
+  final OrdersState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs = const [
+      ('all', 'Все заказы'),
+      ('current', 'Текущие'),
+      ('history', 'История'),
+      ('cancelled', 'Отменённые'),
+    ];
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: tabs
+          .map(
+            (tab) => ChoiceChip(
+              label: Text(tab.$2),
+              selected: state.tab == tab.$1,
+              onSelected: (_) {
+                final cubit = context.read<OrdersCubit>();
+                cubit.loadOrders(
+                  tab: tab.$1,
+                  status: null,
+                  offset: 0,
+                  limit: 9999,
+                );
+              },
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _OrdersGrid extends StatelessWidget {
+  const _OrdersGrid({
+    required this.orders,
+    required this.isWide,
+  });
+
+  final List<Order> orders;
+  final bool isWide;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double columnWidth = isWide ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
+        return Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: orders
+              .map<Widget>(
+                (order) => SizedBox(
+                  width: columnWidth,
+                  child: OrderCard(order: order),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
+  }
+}
+
+class _Sidebar extends StatelessWidget {
+  const _Sidebar({
+    required this.ordersResponse,
+  });
+
+  final OrdersResponse ordersResponse;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? ColorName.darkThemeCardBackground : ColorName.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 22,
+                  offset: const Offset(0, 14),
+                  spreadRadius: -10,
+                ),
+              ],
+      ),
+      child: OrdersSummarySection(summary: ordersResponse.summary),
+    );
+  }
+}
+
+class _OrdersHero extends StatelessWidget {
+  const _OrdersHero({required this.totalOrders});
+
+  final int totalOrders;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [ColorName.darkThemeBackgroundSecondary, ColorName.darkThemeCardBackground]
+              : [ColorName.primary.withOpacity(0.08), ColorName.secondary.withOpacity(0.08)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 14),
+                  spreadRadius: -8,
+                ),
+              ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Мои заказы',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Следите за статусом отгрузок, доставок и историей — всё в одном месте.',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark ? ColorName.darkThemeBackgroundSecondary : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '$totalOrders',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                  ),
+                ),
+                Text(
+                  'заказов',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

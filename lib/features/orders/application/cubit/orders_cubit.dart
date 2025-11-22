@@ -9,36 +9,87 @@ class OrdersCubit extends Cubit<OrdersState> {
 
   Future<void> loadOrders({
     String? status,
+    String? search,
+    String? client,
+    String? product,
     String? createdFrom,
     String? createdTo,
+    String? shippedFrom,
+    String? shippedTo,
+    String? deliveredFrom,
+    String? deliveredTo,
+    String? sortBy,
+    String? sortDirection,
     int? limit,
+    int? offset,
     int? recent,
+    String? tab,
   }) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    final effectiveTab = tab ?? state.tab;
+    final effectiveStatus = status ?? (tab != null ? null : state.status);
+
+    final nextState = state.copyWith(
+      status: effectiveStatus,
+      search: search,
+      client: client,
+      product: product,
+      createdFrom: createdFrom,
+      createdTo: createdTo,
+      shippedFrom: shippedFrom,
+      shippedTo: shippedTo,
+      deliveredFrom: deliveredFrom,
+      deliveredTo: deliveredTo,
+      sortBy: sortBy,
+      sortDirection: sortDirection,
+      limit: limit,
+      offset: offset,
+      tab: tab ?? state.tab,
+      errorMessage: null,
+      isLoading: true,
+    );
+
+    emit(nextState);
 
     try {
       final ordersResponse = await _repository.getOrders(
-        status: status,
-        createdFrom: createdFrom,
-        createdTo: createdTo,
-        limit: limit,
+        status: nextState.status,
+        search: nextState.search,
+        client: nextState.client,
+        product: nextState.product,
+        createdFrom: nextState.createdFrom,
+        createdTo: nextState.createdTo,
+        shippedFrom: nextState.shippedFrom,
+        shippedTo: nextState.shippedTo,
+        deliveredFrom: nextState.deliveredFrom,
+        deliveredTo: nextState.deliveredTo,
+        sortBy: nextState.sortBy,
+        sortDirection: nextState.sortDirection,
+        limit: nextState.limit,
+        offset: nextState.offset,
         recent: recent,
       );
-      emit(state.copyWith(
-        ordersResponse: ordersResponse,
-        isLoading: false,
-        errorMessage: null,
-      ));
+
+      emit(
+        nextState.copyWith(
+          ordersResponse: ordersResponse,
+          isLoading: false,
+          errorMessage: null,
+        ),
+      );
     } on Exception catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Ошибка загрузки заказов',
-      ));
+      emit(
+        nextState.copyWith(
+          isLoading: false,
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
+    } catch (_) {
+      emit(
+        nextState.copyWith(
+          isLoading: false,
+          errorMessage: 'Что-то пошло не так, попробуйте позже',
+        ),
+      );
     }
   }
 
@@ -46,4 +97,3 @@ class OrdersCubit extends Cubit<OrdersState> {
     emit(const OrdersState());
   }
 }
-
