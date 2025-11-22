@@ -167,7 +167,7 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
   late final ScrollController _scrollController;
   bool _showLeftButton = false;
   bool _showRightButton = true;
-  double _cardWidth = 0;
+  double _scrollDistance = 0;
 
   @override
   void initState() {
@@ -197,10 +197,10 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
   }
 
   void _scrollLeft() {
-    if (!_scrollController.hasClients || _cardWidth == 0) return;
+    if (!_scrollController.hasClients || _scrollDistance == 0) return;
     
     final currentPosition = _scrollController.position.pixels;
-    final targetPosition = (currentPosition - _cardWidth).clamp(
+    final targetPosition = (currentPosition - _scrollDistance).clamp(
       0.0,
       _scrollController.position.maxScrollExtent,
     );
@@ -213,10 +213,10 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
   }
 
   void _scrollRight() {
-    if (!_scrollController.hasClients || _cardWidth == 0) return;
+    if (!_scrollController.hasClients || _scrollDistance == 0) return;
     
     final currentPosition = _scrollController.position.pixels;
-    final targetPosition = (currentPosition + _cardWidth).clamp(
+    final targetPosition = (currentPosition + _scrollDistance).clamp(
       0.0,
       _scrollController.position.maxScrollExtent,
     );
@@ -226,6 +226,18 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+
+  int _getCardsPerRow(double screenWidth) {
+    if (screenWidth < 600) {
+      return 1; // Mobile
+    } else if (screenWidth < 900) {
+      return 2; // Tablet
+    } else if (screenWidth < 1200) {
+      return 3; // Small desktop
+    } else {
+      return 4; // Large desktop
+    }
   }
 
   @override
@@ -239,13 +251,35 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardWidth = (constraints.maxWidth - 60) / 4;
-        final cardWidthWithSpacing = cardWidth + 20;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final cardsPerRow = _getCardsPerRow(screenWidth);
+        final horizontalPadding = _showLeftButton || _showRightButton ? 48.0 : 0.0;
+        final availableWidth = constraints.maxWidth - horizontalPadding;
         
-        if (_cardWidth != cardWidthWithSpacing) {
+        final spacing = screenWidth < 600 ? 12.0 : screenWidth < 900 ? 16.0 : 20.0;
+        final totalSpacing = spacing * (cardsPerRow - 1);
+        final cardWidth = (availableWidth - totalSpacing) / cardsPerRow;
+        final cardWidthWithSpacing = cardWidth + spacing;
+   
+        double cardHeight;
+        if (screenWidth < 600) {
+          // Мобильные: высота больше для удобства чтения
+          cardHeight = (cardWidth * 1.4).clamp(280.0, 350.0);
+        } else if (screenWidth < 900) {
+          // Планшеты: средняя высота
+          cardHeight = (cardWidth * 1.25).clamp(260.0, 320.0);
+        } else if (screenWidth < 1400) {
+          // Средние десктопы: компактнее
+          cardHeight = (cardWidth * 1.15).clamp(240.0, 300.0);
+        } else {
+          // Большие экраны: минимальная высота для компактности
+          cardHeight = (cardWidth * 1.1).clamp(220.0, 280.0);
+        }
+        
+        if (_scrollDistance != cardWidthWithSpacing) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             setState(() {
-              _cardWidth = cardWidthWithSpacing;
+              _scrollDistance = cardWidthWithSpacing;
             });
             _updateButtonVisibility();
           });
@@ -265,11 +299,9 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
                 ),
               ),
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: _showLeftButton || _showRightButton ? 48 : 0,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: SizedBox(
-                height: _getCardHeight(cardWidth),
+                height: cardHeight,
                 child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
@@ -278,22 +310,23 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
                   itemExtent: cardWidthWithSpacing,
                   itemBuilder: (context, index) {
                     final popularProduct = widget.products[index];
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        right: index < widget.products.length - 1 ? 20 : 0,
+                    return Container(
+                      width: cardWidth,
+                      height: cardHeight,
+                      margin: EdgeInsets.only(
+                        right: index < widget.products.length - 1 ? spacing : 0,
                       ),
-                      child: SizedBox(
-                        width: cardWidth,
-                        child: ProductCard(
-                          product: popularProduct.product,
-                          showPrice: true,
-                          showPopularity: true,
-                          totalOrdered: popularProduct.totalOrdered,
-                          cardStyle: ProductCardStyle.featured,
-                          onTap: () {
-                            context.go('/products/${popularProduct.product.id}');
-                          },
-                        ),
+                      child: ProductCard(
+                        product: popularProduct.product,
+                        showPrice: true,
+                        showPopularity: true,
+                        totalOrdered: popularProduct.totalOrdered,
+                        cardStyle: ProductCardStyle.featured,
+                        cardWidth: cardWidth,
+                        cardHeight: cardHeight,
+                        onTap: () {
+                          context.go('/products/${popularProduct.product.id}');
+                        },
                       ),
                     );
                   },
@@ -315,10 +348,6 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
         );
       },
     );
-  }
-
-  double _getCardHeight(double cardWidth) {
-    return cardWidth / 0.75 - 150;
   }
 }
 

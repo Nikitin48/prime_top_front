@@ -14,6 +14,8 @@ class ProductCard extends StatefulWidget {
     this.showPopularity = false,
     this.totalOrdered,
     this.cardStyle = ProductCardStyle.standard,
+    this.cardWidth,
+    this.cardHeight,
   });
 
   final Product product;
@@ -22,6 +24,8 @@ class ProductCard extends StatefulWidget {
   final bool showPopularity;
   final double? totalOrdered;
   final ProductCardStyle cardStyle;
+  final double? cardWidth;
+  final double? cardHeight;
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -299,6 +303,22 @@ class _ProductCardState extends State<ProductCard> {
         ? ColorName.darkThemeCardBackground
         : ColorName.cardBackground;
 
+    // Адаптивные размеры в зависимости от размера карточки
+    final cardWidth = widget.cardWidth ?? 300;
+    
+    // Коэффициент масштабирования (базовый размер 300x350)
+    final scaleFactor = (cardWidth / 300).clamp(0.7, 1.2);
+    
+    // Адаптивные размеры элементов
+    final padding = (24 * scaleFactor).clamp(16.0, 24.0);
+    final colorBoxSize = (64 * scaleFactor).clamp(48.0, 64.0);
+    final spacing1 = (20 * scaleFactor).clamp(12.0, 20.0);
+    final spacing2 = (8 * scaleFactor).clamp(6.0, 8.0);
+    final borderRadius = (20 * scaleFactor).clamp(16.0, 20.0);
+    final colorBoxBorderRadius = (16 * scaleFactor).clamp(12.0, 16.0);
+    final buttonSize = (48 * scaleFactor).clamp(40.0, 48.0);
+    final buttonIconSize = (20 * scaleFactor).clamp(18.0, 20.0);
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovered = true),
@@ -307,12 +327,12 @@ class _ProductCardState extends State<ProductCard> {
         onTap: _handleTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(padding),
           decoration: BoxDecoration(
             color: _isHovered
                 ? Color.lerp(baseColor, ColorName.primary, 0.05)
                 : baseColor,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
               color: _isHovered
                   ? ColorName.primary.withValues(alpha: 0.4)
@@ -335,120 +355,146 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                   ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          child: LayoutBuilder(
+            builder: (context, cardConstraints) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: RalColorHelper.getRalColor(widget.product.colorCode),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isDark
-                            ? ColorName.darkThemeBorderSoft
-                            : ColorName.borderSoft,
-                        width: 1.5,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: colorBoxSize,
+                            height: colorBoxSize,
+                            decoration: BoxDecoration(
+                              color: RalColorHelper.getRalColor(widget.product.colorCode),
+                              borderRadius: BorderRadius.circular(colorBoxBorderRadius),
+                              border: Border.all(
+                                color: isDark
+                                    ? ColorName.darkThemeBorderSoft
+                                    : ColorName.borderSoft,
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.15),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Text(
+                                'RAL\n${widget.product.colorCode}',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: _getContrastColor(
+                                    RalColorHelper.getRalColor(widget.product.colorCode),
+                                  ),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: (10 * scaleFactor).clamp(8.0, 10.0),
+                                  height: 1.2,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          if (widget.showPopularity && widget.totalOrdered != null)
+                            Flexible(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: (12 * scaleFactor).clamp(8.0, 12.0),
+                                  vertical: (6 * scaleFactor).clamp(4.0, 6.0),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorName.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular((20 * scaleFactor).clamp(16.0, 20.0)),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.trending_up,
+                                      size: (16 * scaleFactor).clamp(14.0, 16.0),
+                                      color: ColorName.primary,
+                                    ),
+                                    SizedBox(width: (4 * scaleFactor).clamp(2.0, 4.0)),
+                                    Flexible(
+                                      child: Text(
+                                        '${widget.totalOrdered!.toStringAsFixed(0)}',
+                                        style: theme.textTheme.labelMedium?.copyWith(
+                                          color: ColorName.primary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: (12 * scaleFactor).clamp(10.0, 12.0),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                      SizedBox(height: spacing1),
+                      Text(
+                        widget.product.name,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: isDark
+                              ? ColorName.darkThemeTextPrimary
+                              : ColorName.textPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: (20 * scaleFactor).clamp(16.0, 20.0),
+                        ),
+                        maxLines: cardWidth < 250 ? 3 : 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: spacing2),
+                      Text(
+                        widget.product.coatingType.name,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: isDark
+                              ? ColorName.darkThemeTextSecondary
+                              : ColorName.textSecondary,
+                          fontSize: (14 * scaleFactor).clamp(12.0, 14.0),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  if (widget.showPrice)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            '${widget.product.price} ₽',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: ColorName.primary,
+                              fontWeight: FontWeight.w800,
+                              fontSize: (24 * scaleFactor).clamp(18.0, 24.0),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        SizedBox(width: (8 * scaleFactor).clamp(4.0, 8.0)),
+                        AddToCartButton(
+                          productId: widget.product.id,
+                          size: buttonSize,
+                          iconSize: buttonIconSize,
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        'RAL\n${widget.product.colorCode}',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: _getContrastColor(
-                            RalColorHelper.getRalColor(widget.product.colorCode),
-                          ),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 10,
-                          height: 1.2,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  if (widget.showPopularity && widget.totalOrdered != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorName.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.trending_up,
-                            size: 16,
-                            color: ColorName.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${widget.totalOrdered!.toStringAsFixed(0)}',
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: ColorName.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                 ],
-              ),
-              const SizedBox(height: 20),
-              Text(
-                widget.product.name,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: isDark
-                      ? ColorName.darkThemeTextPrimary
-                      : ColorName.textPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.product.coatingType.name,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark
-                      ? ColorName.darkThemeTextSecondary
-                      : ColorName.textSecondary,
-                ),
-              ),
-              const Spacer(),
-              if (widget.showPrice)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${widget.product.price} ₽',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        color: ColorName.primary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    AddToCartButton(
-                      productId: widget.product.id,
-                      size: 48,
-                      iconSize: 20,
-                    ),
-                  ],
-                ),
-            ],
+              );
+            },
           ),
         ),
       ),
