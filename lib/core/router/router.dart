@@ -6,6 +6,7 @@ import 'package:prime_top_front/features/home/presentation/pages/home_page.dart'
 import 'package:prime_top_front/features/home/presentation/widgets/home_drawer.dart';
 import 'package:prime_top_front/core/widgets/app_header.dart';
 import 'package:prime_top_front/core/widgets/app_footer.dart';
+import 'package:prime_top_front/core/widgets/app_bottom_navigation_bar.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/my_orders_page.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/order_detail_page.dart';
 import 'package:prime_top_front/features/orders/presentation/pages/order_history_page.dart';
@@ -24,6 +25,9 @@ final GoRouter appRouter = GoRouter(
     ShellRoute(
       builder: (context, state, child) {
         final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isMobile = screenWidth < 600;
+        
         return BlocBuilder<MenuCubit, MenuState>(
           builder: (context, menuState) {
             return Stack(
@@ -46,6 +50,7 @@ final GoRouter appRouter = GoRouter(
                     ),
                   ),
                   drawer: const HomeDrawer(),
+                  bottomNavigationBar: isMobile ? const AppBottomNavigationBar() : null,
                   body: LayoutBuilder(
                     builder: (context, constraints) {
                       return SingleChildScrollView(
@@ -56,9 +61,7 @@ final GoRouter appRouter = GoRouter(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Контент страницы
                               child,
-                              // Footer внизу контента
                               const AppFooter(),
                             ],
                           ),
@@ -69,7 +72,7 @@ final GoRouter appRouter = GoRouter(
                 ),
                 if (menuState.isOpen)
                   Positioned(
-                    top: MediaQuery.of(context).padding.top + 96, // Status bar + AppBar
+                    top: MediaQuery.of(context).padding.top + 96,
                     left: 0,
                     right: 0,
                     bottom: 0,

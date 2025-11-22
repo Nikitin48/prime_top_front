@@ -75,21 +75,26 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
 
     return ScreenWrapper(
       child: BlocBuilder<ProductsCubit, ProductsState>(
         builder: (context, state) {
           if (state.isLoading && state.products.isEmpty) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 16 : 32,
+                vertical: isMobile ? 16 : 32,
+              ).copyWith(top: isMobile ? 32 : 64),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1400),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(context, theme),
-                    const SizedBox(height: 32),
-                    _buildLoadingState(context, theme),
+                    _buildHeader(context, theme, isMobile),
+                    SizedBox(height: isMobile ? 16 : 32),
+                    _buildLoadingState(context, theme, isMobile),
                   ],
                 ),
               ),
@@ -98,15 +103,18 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
 
           if (state.errorMessage != null && state.products.isEmpty) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 16 : 32,
+                vertical: isMobile ? 16 : 32,
+              ).copyWith(top: isMobile ? 32 : 64),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1400),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(context, theme),
-                    const SizedBox(height: 32),
-                    _buildErrorState(context, theme, state.errorMessage!),
+                    _buildHeader(context, theme, isMobile),
+                    SizedBox(height: isMobile ? 16 : 32),
+                    _buildErrorState(context, theme, state.errorMessage!, isMobile),
                   ],
                 ),
               ),
@@ -115,15 +123,18 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
 
           if (state.products.isEmpty) {
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 16 : 32,
+                vertical: isMobile ? 16 : 32,
+              ).copyWith(top: isMobile ? 32 : 64),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1400),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeader(context, theme),
-                    const SizedBox(height: 32),
-                    _buildEmptyState(context, theme, isDark),
+                    _buildHeader(context, theme, isMobile),
+                    SizedBox(height: isMobile ? 16 : 32),
+                    _buildEmptyState(context, theme, isDark, isMobile),
                   ],
                 ),
               ),
@@ -136,15 +147,15 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ThemeData theme) {
+  Widget _buildHeader(BuildContext context, ThemeData theme, bool isMobile) {
     return Padding(
-      padding: const EdgeInsets.only(left: 50),
+      padding: EdgeInsets.only(left: isMobile ? 0 : 50),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             widget.title,
-            style: theme.textTheme.displaySmall?.copyWith(
+            style: (isMobile ? theme.textTheme.titleLarge : theme.textTheme.displaySmall)?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -153,8 +164,9 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
               padding: const EdgeInsets.only(top: 8),
               child: Text(
                 widget.subtitle!,
-                style: theme.textTheme.bodyLarge?.copyWith(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   color: ColorName.textSecondary,
+                  fontSize: isMobile ? 14 : null,
                 ),
               ),
             ),
@@ -166,8 +178,9 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       'Найдено товаров: ${state.totalCount}',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: ColorName.textSecondary,
+                        fontSize: isMobile ? 14 : null,
                       ),
                     ),
                   );
@@ -180,36 +193,37 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     );
   }
 
-  Widget _buildLoadingState(BuildContext context, ThemeData theme) {
-    return const Center(
+  Widget _buildLoadingState(BuildContext context, ThemeData theme, bool isMobile) {
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(64.0),
-        child: CircularProgressIndicator(),
+        padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
+        child: const CircularProgressIndicator(),
       ),
     );
   }
 
-  Widget _buildErrorState(BuildContext context, ThemeData theme, String errorMessage) {
+  Widget _buildErrorState(BuildContext context, ThemeData theme, String errorMessage, bool isMobile) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(64.0),
+        padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.error_outline,
-              size: 64,
+              size: isMobile ? 48 : 64,
               color: ColorName.danger,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: isMobile ? 12 : 16),
             Text(
               errorMessage,
-              style: theme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: ColorName.danger,
+                fontSize: isMobile ? 14 : null,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: isMobile ? 16 : 24),
             ElevatedButton(
               onPressed: () {
                 _loadProducts(0);
@@ -222,16 +236,17 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, ThemeData theme, bool isDark) {
+  Widget _buildEmptyState(BuildContext context, ThemeData theme, bool isDark, bool isMobile) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(64.0),
+        padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
         child: Text(
           'Товары не найдены',
-          style: theme.textTheme.bodyLarge?.copyWith(
+          style: theme.textTheme.bodyMedium?.copyWith(
             color: isDark
                 ? ColorName.darkThemeTextSecondary
                 : ColorName.textSecondary,
+            fontSize: isMobile ? 14 : null,
           ),
         ),
       ),
@@ -247,15 +262,17 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
+        final isMobile = screenWidth < 600;
         final cardsPerRow = _getCardsPerRow(screenWidth);
         final spacing = screenWidth < 600 ? 12.0 : screenWidth < 900 ? 16.0 : 20.0;
         final totalSpacing = spacing * (cardsPerRow - 1);
         final availableWidth = constraints.maxWidth.clamp(0.0, 1400.0);
-        final cardWidth = (availableWidth - totalSpacing - 100) / cardsPerRow;
+        final sidePadding = isMobile ? 0.0 : 100.0;
+        final cardWidth = (availableWidth - totalSpacing - sidePadding) / cardsPerRow;
         
         double cardHeight;
         if (screenWidth < 600) {
-          cardHeight = (cardWidth * 1.4).clamp(280.0, 350.0);
+          cardHeight = (cardWidth * 1.3).clamp(240.0, 300.0);
         } else if (screenWidth < 900) {
           cardHeight = (cardWidth * 1.25).clamp(260.0, 320.0);
         } else if (screenWidth < 1400) {
@@ -265,16 +282,22 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
         }
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 16 : 32,
+            vertical: isMobile ? 16 : 32,
+          ).copyWith(top: isMobile ? 32 : 64),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1400),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context, theme),
-                const SizedBox(height: 32),
+                _buildHeader(context, theme, isMobile),
+                SizedBox(height: isMobile ? 16 : 32),
                 Padding(
-                  padding: const EdgeInsets.only(left: 50, right: 50),
+                  padding: EdgeInsets.only(
+                    left: isMobile ? 0 : 50,
+                    right: isMobile ? 0 : 50,
+                  ),
                   child: GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -301,8 +324,8 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
                   ),
                 ),
                 if (state.totalCount > widget.pageSize) ...[
-                  const SizedBox(height: 32),
-                  _buildPagination(context, theme, isDark, state),
+                  SizedBox(height: isMobile ? 16 : 32),
+                  _buildPagination(context, theme, isDark, state, isMobile),
                 ],
               ],
             ),
@@ -317,11 +340,15 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     ThemeData theme,
     bool isDark,
     ProductsState state,
+    bool isMobile,
   ) {
     final totalPages = (state.totalCount / widget.pageSize).ceil();
 
     return Padding(
-      padding: const EdgeInsets.only(left: 50, right: 50),
+      padding: EdgeInsets.only(
+        left: isMobile ? 0 : 50,
+        right: isMobile ? 0 : 50,
+      ),
       child: PaginationControls(
         currentPage: _currentPage,
         totalPages: totalPages,

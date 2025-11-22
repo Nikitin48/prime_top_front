@@ -20,7 +20,6 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
   @override
   void initState() {
     super.initState();
-    // Загружаем последние заказы при инициализации, если пользователь уже авторизован
     final authState = context.read<AuthCubit>().state;
     if (authState.status == AuthStatus.authenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -35,14 +34,14 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, authState) {
-        // Загружаем заказы при авторизации
         if (authState.status == AuthStatus.authenticated) {
           context.read<OrdersCubit>().loadOrders(recent: 3);
         } else {
-          // Очищаем заказы при выходе
           context.read<OrdersCubit>().clearOrders();
         }
       },
@@ -51,13 +50,13 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
           final isAuthenticated = authState.status == AuthStatus.authenticated;
 
           if (!isAuthenticated) {
-            return _buildUnauthenticatedState(context, theme, isDark);
+            return _buildUnauthenticatedState(context, theme, isDark, isMobile);
           }
 
           return BlocBuilder<OrdersCubit, OrdersState>(
             builder: (context, ordersState) {
               if (ordersState.isLoading) {
-                return _buildLoadingState(context, theme, isDark);
+                return _buildLoadingState(context, theme, isDark, isMobile);
               }
 
               if (ordersState.errorMessage != null) {
@@ -66,15 +65,16 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                   theme,
                   isDark,
                   ordersState.errorMessage!,
+                  isMobile,
                 );
               }
 
               final orders = ordersState.ordersResponse?.orders ?? [];
               if (orders.isEmpty) {
-                return _buildEmptyState(context, theme, isDark);
+                return _buildEmptyState(context, theme, isDark, isMobile);
               }
 
-              return _buildOrdersTable(context, theme, isDark, orders);
+              return _buildOrdersTable(context, theme, isDark, orders, isMobile);
             },
           );
         },
@@ -86,23 +86,27 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     BuildContext context,
     ThemeData theme,
     bool isDark,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 64),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 80,
+        vertical: isMobile ? 32 : 64,
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader(context, theme, isAuthenticated: false),
-            const SizedBox(height: 80),
+            _buildSectionHeader(context, theme, isAuthenticated: false, isMobile: isMobile),
+            SizedBox(height: isMobile ? 32 : 80),
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     'У вас пока нет заказов',
-                    style: theme.textTheme.headlineMedium?.copyWith(
+                    style: (isMobile ? theme.textTheme.titleLarge : theme.textTheme.headlineMedium)?.copyWith(
                       color: isDark
                           ? ColorName.darkThemeTextPrimary
                           : ColorName.textPrimary,
@@ -110,17 +114,18 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: isMobile ? 8 : 12),
                   Text(
                     'Создайте свой первый заказ и получите доступ к качественным\nпорошковым покрытиям для ваших проектов',
-                    style: theme.textTheme.bodyLarge?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: isDark
                           ? ColorName.darkThemeTextSecondary
                           : ColorName.textSecondary,
+                      fontSize: isMobile ? 14 : null,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: isMobile ? 24 : 32),
                   ElevatedButton(
                     onPressed: () {
                       showDialog<void>(
@@ -130,17 +135,17 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 16,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 24 : 32,
+                        vertical: isMobile ? 12 : 16,
                       ),
                       backgroundColor: ColorName.primary,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Сделать ваш первый заказ',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: isMobile ? 14 : 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -158,20 +163,24 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     BuildContext context,
     ThemeData theme,
     bool isDark,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 16 : 32,
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader(context, theme, isAuthenticated: true),
-            const SizedBox(height: 32),
-            const Center(
+            _buildSectionHeader(context, theme, isAuthenticated: true, isMobile: isMobile),
+            SizedBox(height: isMobile ? 16 : 32),
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(64.0),
-                child: CircularProgressIndicator(),
+                padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
+                child: const CircularProgressIndicator(),
               ),
             ),
           ],
@@ -185,36 +194,41 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     ThemeData theme,
     bool isDark,
     String errorMessage,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 32),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 80,
+        vertical: isMobile ? 16 : 32,
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader(context, theme, isAuthenticated: true),
-            const SizedBox(height: 32),
+            _buildSectionHeader(context, theme, isAuthenticated: true, isMobile: isMobile),
+            SizedBox(height: isMobile ? 16 : 32),
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(64.0),
+                padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.error_outline,
-                      size: 64,
+                      size: isMobile ? 48 : 64,
                       color: ColorName.danger,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: isMobile ? 12 : 16),
                     Text(
                       errorMessage,
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: ColorName.danger,
+                        fontSize: isMobile ? 14 : null,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: isMobile ? 16 : 24),
                     ElevatedButton(
                       onPressed: () {
                         context.read<OrdersCubit>().loadOrders(recent: 3);
@@ -235,34 +249,39 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     BuildContext context,
     ThemeData theme,
     bool isDark,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 32),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 80,
+        vertical: isMobile ? 16 : 32,
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader(context, theme, isAuthenticated: true),
-            const SizedBox(height: 32),
+            _buildSectionHeader(context, theme, isAuthenticated: true, isMobile: isMobile),
+            SizedBox(height: isMobile ? 16 : 32),
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(64.0),
+                padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.shopping_cart_outlined,
-                      size: 64,
+                      size: isMobile ? 48 : 64,
                       color: ColorName.textSecondary,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: isMobile ? 12 : 16),
                     Text(
                       'У вас пока нет заказов',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: isDark
                             ? ColorName.darkThemeTextSecondary
                             : ColorName.textSecondary,
+                        fontSize: isMobile ? 14 : null,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -275,17 +294,17 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
               child: ElevatedButton(
                 onPressed: () => context.goNamed('orders'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 24 : 32,
+                    vertical: isMobile ? 12 : 16,
                   ),
                   backgroundColor: ColorName.primary,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text(
+                child: Text(
                   'Посмотреть все заказы',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: isMobile ? 14 : 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -302,16 +321,20 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     ThemeData theme,
     bool isDark,
     List<Order> orders,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 32).copyWith(top: 64),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 80,
+        vertical: isMobile ? 16 : 32,
+      ).copyWith(top: isMobile ? 32 : 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionHeader(context, theme, isAuthenticated: true),
-            const SizedBox(height: 32),
+            _buildSectionHeader(context, theme, isAuthenticated: true, isMobile: isMobile),
+            SizedBox(height: isMobile ? 16 : 32),
             Container(
               decoration: BoxDecoration(
                 color: isDark
@@ -325,15 +348,22 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                 ),
               ),
               child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(1),
-                  1: FlexColumnWidth(1.5),
-                  2: FlexColumnWidth(1),
-                  3: FlexColumnWidth(1),
-                  4: FlexColumnWidth(1),
-                },
+                columnWidths: isMobile
+                    ? const {
+                        0: FlexColumnWidth(1),
+                        1: FlexColumnWidth(1.2),
+                        2: FlexColumnWidth(1),
+                        3: FlexColumnWidth(0.8),
+                        4: FlexColumnWidth(0.8),
+                      }
+                    : const {
+                        0: FlexColumnWidth(1),
+                        1: FlexColumnWidth(1.5),
+                        2: FlexColumnWidth(1),
+                        3: FlexColumnWidth(1),
+                        4: FlexColumnWidth(1),
+                      },
                 children: [
-                  // Заголовок таблицы
                   TableRow(
                     decoration: BoxDecoration(
                       color: isDark
@@ -349,35 +379,39 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                         context,
                         theme,
                         isDark,
-                        '№ Заказа',
+                        isMobile ? '№' : '№ Заказа',
+                        isMobile: isMobile,
                       ),
                       _buildTableHeaderCell(
                         context,
                         theme,
                         isDark,
-                        'Дата создания',
+                        isMobile ? 'Дата' : 'Дата создания',
+                        isMobile: isMobile,
                       ),
                       _buildTableHeaderCell(
                         context,
                         theme,
                         isDark,
                         'Статус',
+                        isMobile: isMobile,
                       ),
                       _buildTableHeaderCell(
                         context,
                         theme,
                         isDark,
-                        'Позиций',
+                        isMobile ? 'Поз.' : 'Позиций',
+                        isMobile: isMobile,
                       ),
                       _buildTableHeaderCell(
                         context,
                         theme,
                         isDark,
-                        'Количество',
+                        isMobile ? 'Кол.' : 'Количество',
+                        isMobile: isMobile,
                       ),
                     ],
                   ),
-                  // Данные заказов
                   ...orders.asMap().entries.map((entry) {
                     final index = entry.key;
                     final order = entry.value;
@@ -410,13 +444,17 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                           isDark,
                           '#${order.id}',
                           onTap: onOrderTap,
+                          isMobile: isMobile,
                         ),
                         _buildTableCell(
                           context,
                           theme,
                           isDark,
-                          DateFormat('dd.MM.yyyy').format(order.createdAt),
+                          isMobile
+                              ? DateFormat('dd.MM.yy').format(order.createdAt)
+                              : DateFormat('dd.MM.yyyy').format(order.createdAt),
                           onTap: onOrderTap,
+                          isMobile: isMobile,
                         ),
                         _buildTableCell(
                           context,
@@ -425,6 +463,7 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                           _getStatusText(order.status),
                           statusColor: _getStatusColor(order.status, isDark),
                           onTap: onOrderTap,
+                          isMobile: isMobile,
                         ),
                         _buildTableCell(
                           context,
@@ -432,6 +471,7 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                           isDark,
                           '${order.items.length}',
                           onTap: onOrderTap,
+                          isMobile: isMobile,
                         ),
                         _buildTableCell(
                           context,
@@ -439,6 +479,7 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
                           isDark,
                           order.totalQuantity.toStringAsFixed(0),
                           onTap: onOrderTap,
+                          isMobile: isMobile,
                         ),
                       ],
                     );
@@ -456,47 +497,66 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     BuildContext context,
     ThemeData theme, {
     bool isAuthenticated = false,
+    bool isMobile = false,
   }) {
     final isDark = theme.brightness == Brightness.dark;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          'Последние заказы',
-          style: theme.textTheme.displaySmall?.copyWith(
-            fontWeight: FontWeight.w700,
+        Flexible(
+          child: Text(
+            'Последние заказы',
+            style: (isMobile ? theme.textTheme.titleLarge : theme.textTheme.displaySmall)?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
-        if (isAuthenticated)
-          TextButton(
-            onPressed: () => context.goNamed('orders'),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Посмотреть все заказы',
-                  style: theme.textTheme.bodyLarge?.copyWith(
+        if (isAuthenticated) ...[
+          SizedBox(width: isMobile ? 4 : 8),
+          Flexible(
+            child: TextButton(
+              onPressed: () => context.goNamed('orders'),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 8 : 12,
+                  vertical: isMobile ? 6 : 8,
+                ),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      isMobile ? 'Все заказы' : 'Посмотреть все заказы',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: isDark
+                            ? ColorName.darkThemeTextPrimary
+                            : ColorName.textPrimary,
+                        fontWeight: FontWeight.w500,
+                        fontSize: isMobile ? 13 : null,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                  SizedBox(width: isMobile ? 2 : 4),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: isMobile ? 16 : 18,
                     color: isDark
                         ? ColorName.darkThemeTextPrimary
                         : ColorName.textPrimary,
-                    fontWeight: FontWeight.w500,
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward,
-                  size: 20,
-                  color: isDark
-                      ? ColorName.darkThemeTextPrimary
-                      : ColorName.textPrimary,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+        ],
       ],
     );
   }
@@ -505,17 +565,19 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     BuildContext context,
     ThemeData theme,
     bool isDark,
-    String text,
-  ) {
+    String text, {
+    bool isMobile = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isMobile ? 8 : 16),
       child: Text(
         text,
-        style: theme.textTheme.titleMedium?.copyWith(
+        style: theme.textTheme.titleSmall?.copyWith(
           color: isDark
               ? ColorName.darkThemeTextPrimary
               : ColorName.textPrimary,
           fontWeight: FontWeight.w600,
+          fontSize: isMobile ? 12 : null,
         ),
       ),
     );
@@ -528,12 +590,16 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     String text, {
     Color? statusColor,
     VoidCallback? onTap,
+    bool isMobile = false,
   }) {
     final cell = Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isMobile ? 8 : 16),
       child: statusColor != null
           ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 8 : 12,
+                vertical: isMobile ? 4 : 6,
+              ),
               decoration: BoxDecoration(
                 color: statusColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -543,18 +609,20 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
               ),
               child: Text(
                 text,
-                style: theme.textTheme.bodyMedium?.copyWith(
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: statusColor,
                   fontWeight: FontWeight.w500,
+                  fontSize: isMobile ? 11 : null,
                 ),
               ),
             )
           : Text(
               text,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: theme.textTheme.bodySmall?.copyWith(
                 color: isDark
                     ? ColorName.darkThemeTextPrimary
                     : ColorName.textPrimary,
+                fontSize: isMobile ? 12 : null,
               ),
             ),
     );

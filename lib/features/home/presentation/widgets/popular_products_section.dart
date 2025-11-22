@@ -25,15 +25,17 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
 
     return BlocBuilder<TopProductsCubit, TopProductsState>(
       builder: (context, state) {
         if (state.isLoading) {
-          return _buildLoadingState(context, theme, isDark);
+          return _buildLoadingState(context, theme, isDark, isMobile);
         }
 
         if (state.errorMessage != null) {
-          return _buildErrorState(context, theme, isDark, state.errorMessage!);
+          return _buildErrorState(context, theme, isDark, state.errorMessage!, isMobile);
         }
 
         if (state.products.isEmpty) {
@@ -41,14 +43,17 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
         }
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 16 : 32,
+            vertical: isMobile ? 16 : 32,
+          ).copyWith(top: isMobile ? 32 : 64),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 1400),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionHeader(context, theme),
-                const SizedBox(height: 24),
+                _buildSectionHeader(context, theme, isMobile),
+                SizedBox(height: isMobile ? 16 : 24),
                 _ProductsScrollSection(products: state.products),
               ],
             ),
@@ -58,15 +63,15 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, ThemeData theme) {
+  Widget _buildSectionHeader(BuildContext context, ThemeData theme, bool isMobile) {
     return Padding(
-      padding: const EdgeInsets.only(left: 50),
+      padding: EdgeInsets.only(left: isMobile ? 0 : 50),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Популярные товары',
-            style: theme.textTheme.displaySmall?.copyWith(
+            style: (isMobile ? theme.textTheme.titleLarge : theme.textTheme.displaySmall)?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -80,19 +85,23 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
     BuildContext context,
     ThemeData theme,
     bool isDark,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 16 : 32,
+      ).copyWith(top: isMobile ? 32 : 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           children: [
-            _buildSectionHeader(context, theme),
-            const SizedBox(height: 32),
-            const Center(
+            _buildSectionHeader(context, theme, isMobile),
+            SizedBox(height: isMobile ? 16 : 32),
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(64.0),
-                child: CircularProgressIndicator(),
+                padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
+                child: const CircularProgressIndicator(),
               ),
             ),
           ],
@@ -106,35 +115,40 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
     ThemeData theme,
     bool isDark,
     String errorMessage,
+    bool isMobile,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32).copyWith(top: 64),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 16 : 32,
+      ).copyWith(top: isMobile ? 32 : 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
           children: [
-            _buildSectionHeader(context, theme),
-            const SizedBox(height: 32),
+            _buildSectionHeader(context, theme, isMobile),
+            SizedBox(height: isMobile ? 16 : 32),
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(64.0),
+                padding: EdgeInsets.all(isMobile ? 32.0 : 64.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.error_outline,
-                      size: 64,
+                      size: isMobile ? 48 : 64,
                       color: ColorName.danger,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: isMobile ? 12 : 16),
                     Text(
                       errorMessage,
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         color: ColorName.danger,
+                        fontSize: isMobile ? 14 : null,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: isMobile ? 16 : 24),
                     ElevatedButton(
                       onPressed: () {
                         context.read<TopProductsCubit>().loadTopProducts();
@@ -263,16 +277,12 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
    
         double cardHeight;
         if (screenWidth < 600) {
-          // Мобильные: высота больше для удобства чтения
-          cardHeight = (cardWidth * 1.4).clamp(280.0, 350.0);
+          cardHeight = (cardWidth * 1.3).clamp(240.0, 300.0);
         } else if (screenWidth < 900) {
-          // Планшеты: средняя высота
           cardHeight = (cardWidth * 1.25).clamp(260.0, 320.0);
         } else if (screenWidth < 1400) {
-          // Средние десктопы: компактнее
           cardHeight = (cardWidth * 1.15).clamp(240.0, 300.0);
         } else {
-          // Большие экраны: минимальная высота для компактности
           cardHeight = (cardWidth * 1.1).clamp(220.0, 280.0);
         }
         
@@ -284,6 +294,9 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
             _updateButtonVisibility();
           });
         }
+        
+        final isMobile = screenWidth < 600;
+        final adjustedHorizontalPadding = isMobile ? 0.0 : horizontalPadding;
         
         return Stack(
           children: [
@@ -299,7 +312,7 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
                 ),
               ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              padding: EdgeInsets.symmetric(horizontal: adjustedHorizontalPadding),
               child: SizedBox(
                 height: cardHeight,
                 child: ListView.builder(
@@ -364,14 +377,19 @@ class _ScrollButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+    final buttonSize = isMobile ? 36.0 : 48.0;
+    final iconSize = isMobile ? 20.0 : 28.0;
+    
     return Align(
       alignment: icon == Icons.chevron_left ? Alignment.centerLeft : Alignment.centerRight,
       child: Container(
-        width: 48,
-        height: 48,
+        width: buttonSize,
+        height: buttonSize,
         margin: EdgeInsets.only(
-          left: icon == Icons.chevron_left ? 8 : 0,
-          right: icon == Icons.chevron_right ? 8 : 0,
+          left: icon == Icons.chevron_left ? (isMobile ? 4 : 8) : 0,
+          right: icon == Icons.chevron_right ? (isMobile ? 4 : 8) : 0,
         ),
         decoration: BoxDecoration(
           color: isDark
@@ -381,8 +399,8 @@ class _ScrollButton extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              blurRadius: isMobile ? 8 : 12,
+              offset: Offset(0, isMobile ? 2 : 4),
             ),
           ],
           border: Border.all(
@@ -396,11 +414,11 @@ class _ScrollButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPressed,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(buttonSize / 2),
             child: Icon(
               icon,
               color: ColorName.primary,
-              size: 28,
+              size: iconSize,
             ),
           ),
         ),
