@@ -105,4 +105,3 @@ class AnalysesModel extends Analyses {
     );
   }
 }
-

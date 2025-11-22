@@ -28,7 +28,6 @@ class OrdersCubit extends Cubit<OrdersState> {
   }) async {
     final effectiveStatus = status ?? (tab != null ? null : state.status);
 
-    // Увеличиваем токен запроса для отмены устаревших ответов
     _requestToken++;
     final currentToken = _requestToken;
 
@@ -73,7 +72,6 @@ class OrdersCubit extends Cubit<OrdersState> {
         recent: recent,
       );
 
-      // Игнорируем ответ, если пришел новый запрос (токен изменился)
       if (currentToken != _requestToken) {
         return;
       }
@@ -86,7 +84,6 @@ class OrdersCubit extends Cubit<OrdersState> {
         ),
       );
     } on Exception catch (e) {
-      // Игнорируем ошибку, если пришел новый запрос (токен изменился)
       if (currentToken != _requestToken) {
         return;
       }
@@ -98,7 +95,6 @@ class OrdersCubit extends Cubit<OrdersState> {
         ),
       );
     } catch (_) {
-      // Игнорируем ошибку, если пришел новый запрос (токен изменился)
       if (currentToken != _requestToken) {
         return;
       }

@@ -31,4 +31,3 @@ abstract class ProductsRepository {
 
   Future<ProductDetail> getProductDetail(int productId);
 }
-

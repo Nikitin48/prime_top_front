@@ -21,4 +21,3 @@ class OrdersResponse extends Equatable {
   @override
   List<Object?> get props => [client, summary, totalCount, count, orders];
 }
-

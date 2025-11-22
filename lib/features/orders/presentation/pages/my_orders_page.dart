@@ -252,7 +252,6 @@ class _OrdersGrid extends StatelessWidget {
         final spacing = 16.0;
         final itemsPerRow = isWide ? 2 : 1;
 
-        // Группируем элементы по строкам
         final rows = <List<Order>>[];
         for (var i = 0; i < orders.length; i += itemsPerRow) {
           rows.add(orders.sublist(

@@ -48,4 +48,3 @@ class PopularProductModel extends PopularProduct {
     );
   }
 }
-

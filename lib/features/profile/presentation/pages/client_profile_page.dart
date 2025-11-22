@@ -145,5 +145,3 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     );
   }
 }
-
-

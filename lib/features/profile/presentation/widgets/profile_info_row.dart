@@ -56,4 +56,3 @@ class ProfileInfoRow extends StatelessWidget {
     );
   }
 }
-

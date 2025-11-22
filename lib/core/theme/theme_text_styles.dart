@@ -208,5 +208,3 @@ class ThemeTextStyles extends ThemeExtension<ThemeTextStyles> {
     regularXXS: light.regularXXS.copyWith(color: ColorName.darkThemeTextPrimary),
   );
 }
-
-

@@ -57,7 +57,6 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _remoteDataSource.logout();
     } catch (e) {
-      // При выходе игнорируем ошибки
     }
   }
 

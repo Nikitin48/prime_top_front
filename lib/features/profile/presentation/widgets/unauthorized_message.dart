@@ -36,4 +36,3 @@ class UnauthorizedMessage extends StatelessWidget {
     );
   }
 }
-

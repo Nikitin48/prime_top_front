@@ -29,4 +29,3 @@ class CoatingTypesCubit extends Cubit<CoatingTypesState> {
     }
   }
 }
-

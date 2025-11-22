@@ -27,4 +27,3 @@ class ProductDetailState extends Equatable {
   @override
   List<Object?> get props => [productDetail, isLoading, errorMessage];
 }
-

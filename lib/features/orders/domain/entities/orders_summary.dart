@@ -16,4 +16,3 @@ class OrdersSummary extends Equatable {
   @override
   List<Object?> get props => [status, ordersCount, seriesCount, totalQuantity];
 }
-

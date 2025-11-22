@@ -16,4 +16,3 @@ class MenuCubit extends Cubit<MenuState> {
     emit(state.copyWith(isOpen: !state.isOpen));
   }
 }
-

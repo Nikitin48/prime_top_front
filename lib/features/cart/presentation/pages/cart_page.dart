@@ -237,4 +237,3 @@ class _CartView extends StatelessWidget {
     );
   }
 }
-

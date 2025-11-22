@@ -13,5 +13,3 @@ class CustomTheme extends Equatable {
   @override
   List<Object?> get props => [name, data];
 }
-
-

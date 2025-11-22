@@ -30,6 +30,40 @@ class OrdersResponseModel extends OrdersResponse {
     );
   }
 
+  factory OrdersResponseModel.fromAdminJson(Map<String, dynamic> json) {
+    final count = json['count'] is int ? json['count'] as int : 0;
+    
+    final orders = <OrderModel>[];
+    if (json['results'] is List) {
+      final resultsList = json['results'] as List;
+      orders.addAll(
+        resultsList
+            .map((item) {
+              try {
+                if (item is Map<String, dynamic>) {
+                  return OrderModel.fromAdminListJson(item);
+                }
+              } catch (e) {
+              }
+              return null;
+            })
+            .whereType<OrderModel>(),
+      );
+    }
+
+    return OrdersResponseModel(
+      client: ClientModel.fromJson({
+        'id': 0,
+        'name': '',
+        'email': '',
+      }),
+      summary: [],
+      totalCount: count,
+      count: orders.length,
+      orders: orders,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'client': (client as ClientModel).toJson(),
@@ -54,4 +88,3 @@ class OrdersResponseModel extends OrdersResponse {
     );
   }
 }
-

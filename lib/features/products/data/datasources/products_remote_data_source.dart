@@ -31,4 +31,3 @@ abstract class ProductsRemoteDataSource {
 
   Future<ProductDetailModel> getProductDetail(int productId);
 }
-

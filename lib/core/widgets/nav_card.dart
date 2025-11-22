@@ -53,5 +53,3 @@ class NavCard extends StatelessWidget {
     );
   }
 }
-
-

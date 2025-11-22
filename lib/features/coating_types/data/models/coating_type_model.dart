@@ -31,4 +31,3 @@ class CoatingTypeModel extends CoatingType {
     );
   }
 }
-

@@ -67,4 +67,3 @@ class _CoatingTypesApiClient extends ApiClient {
     return '$base$url';
   }
 }
-

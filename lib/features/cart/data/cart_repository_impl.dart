@@ -129,4 +129,3 @@ class CartRepositoryImpl implements CartRepository {
     return orderModel.toEntity();
   }
 }
-

@@ -374,4 +374,3 @@ class _ProductsListWidgetState extends State<ProductsListWidget> {
     }
   }
 }
-

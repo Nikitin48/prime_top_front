@@ -24,6 +24,7 @@ class _CoatingTypesMenuState extends State<CoatingTypesMenu> {
   int? _selectedIndex;
   int? _hoveredIndex;
   Timer? _hoverTimer;
+  bool _isProductsColumnHovered = false;
 
   @override
   void initState() {
@@ -38,30 +39,24 @@ class _CoatingTypesMenuState extends State<CoatingTypesMenu> {
   }
 
   void _onItemTap(CoatingType coatingType, int index) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
+    _hoverTimer?.cancel();
     
-    if (isMobile) {
-      _hoverTimer?.cancel();
-      if (_selectedIndex == index) {
-        setState(() {
-          _selectedIndex = null;
-        });
-        context.read<ProductsCubit>().clearProducts();
-      } else {
-        setState(() {
-          _selectedIndex = index;
-        });
-        context.read<ProductsCubit>().loadProductsByCoatingType(
-          coatingType.id,
-          limit: 10,
-          offset: 0,
-        );
-      }
+    if (_selectedIndex == index) {
+      setState(() {
+        _selectedIndex = null;
+        _hoveredIndex = null;
+      });
+      context.read<ProductsCubit>().clearProducts();
     } else {
       setState(() {
         _selectedIndex = index;
+        _hoveredIndex = null;
       });
+      context.read<ProductsCubit>().loadProductsByCoatingType(
+        coatingType.id,
+        limit: 10,
+        offset: 0,
+      );
     }
   }
 
@@ -74,34 +69,82 @@ class _CoatingTypesMenuState extends State<CoatingTypesMenu> {
     _hoverTimer?.cancel();
 
     if (isHovered) {
-      setState(() {
-        _hoveredIndex = index;
-      });
+      if (_selectedIndex != index) {
+        setState(() {
+          _hoveredIndex = index;
+        });
 
-      _hoverTimer = Timer(const Duration(milliseconds: 500), () {
-        if (mounted && _hoveredIndex == index) {
-          context.read<ProductsCubit>().loadProductsByCoatingType(
-            coatingType.id,
-            limit: 10,
-            offset: 0,
-          );
+        _hoverTimer = Timer(const Duration(milliseconds: 500), () {
+          if (mounted && _hoveredIndex == index && _selectedIndex != index) {
+            context.read<ProductsCubit>().loadProductsByCoatingType(
+              coatingType.id,
+              limit: 10,
+              offset: 0,
+            );
+          }
+        });
+      }
+    } else {
+      _hoverTimer = Timer(const Duration(milliseconds: 150), () {
+        if (mounted && _hoveredIndex == index && !_isProductsColumnHovered) {
+          if (_selectedIndex != null && _selectedIndex != index) {
+            final coatingTypesState = context.read<CoatingTypesCubit>().state;
+            if (_selectedIndex! < coatingTypesState.coatingTypes.length) {
+              final selectedCoatingType = coatingTypesState.coatingTypes[_selectedIndex!];
+              context.read<ProductsCubit>().loadProductsByCoatingType(
+                selectedCoatingType.id,
+                limit: 10,
+                offset: 0,
+              );
+            }
+            setState(() {
+              _hoveredIndex = null;
+            });
+          } else if (_selectedIndex == null) {
+            setState(() {
+              _hoveredIndex = null;
+            });
+            context.read<ProductsCubit>().clearProducts();
+          } else {
+            setState(() {
+              _hoveredIndex = null;
+            });
+          }
         }
       });
-    } else {
-      setState(() {
-        _hoveredIndex = null;
-      });
-      context.read<ProductsCubit>().clearProducts();
     }
   }
 
   void _onProductsColumnHover(bool isHovered) {
-    if (!isHovered && _hoveredIndex != null) {
-      _hoverTimer?.cancel();
-      setState(() {
-        _hoveredIndex = null;
+    _hoverTimer?.cancel();
+    setState(() {
+      _isProductsColumnHovered = isHovered;
+    });
+    
+    if (!isHovered) {
+      _hoverTimer = Timer(const Duration(milliseconds: 150), () {
+        if (mounted && !_isProductsColumnHovered) {
+          if (_selectedIndex != null) {
+            final coatingTypesState = context.read<CoatingTypesCubit>().state;
+            if (_selectedIndex! < coatingTypesState.coatingTypes.length) {
+              final selectedCoatingType = coatingTypesState.coatingTypes[_selectedIndex!];
+              context.read<ProductsCubit>().loadProductsByCoatingType(
+                selectedCoatingType.id,
+                limit: 10,
+                offset: 0,
+              );
+            }
+            setState(() {
+              _hoveredIndex = null;
+            });
+          } else {
+            setState(() {
+              _hoveredIndex = null;
+            });
+            context.read<ProductsCubit>().clearProducts();
+          }
+        }
       });
-      context.read<ProductsCubit>().clearProducts();
     }
   }
 
@@ -170,7 +213,7 @@ class _CoatingTypesMenuState extends State<CoatingTypesMenu> {
                           ),
                         ),
                       ),
-                      child: (isMobile ? _selectedIndex != null : _hoveredIndex != null)
+                      child: (_selectedIndex != null || _hoveredIndex != null)
                           ? MouseRegion(
                               onEnter: isMobile ? null : (_) => _onProductsColumnHover(true),
                               onExit: isMobile ? null : (_) => _onProductsColumnHover(false),
@@ -206,7 +249,7 @@ class _CoatingTypesMenuState extends State<CoatingTypesMenu> {
                             ),
                           ),
                         ),
-                        child: (isMobile ? _selectedIndex != null : _hoveredIndex != null)
+                        child: (_selectedIndex != null || _hoveredIndex != null)
                             ? MouseRegion(
                                 onEnter: isMobile ? null : (_) => _onProductsColumnHover(true),
                                 onExit: isMobile ? null : (_) => _onProductsColumnHover(false),
@@ -373,4 +416,3 @@ class _CoatingTypesMenuState extends State<CoatingTypesMenu> {
     );
   }
 }
-

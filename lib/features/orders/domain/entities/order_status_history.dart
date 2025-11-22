@@ -18,4 +18,3 @@ class OrderStatusHistory extends Equatable {
   @override
   List<Object?> get props => [id, fromStatus, toStatus, changedAt, note];
 }
-

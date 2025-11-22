@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
+import 'package:prime_top_front/features/admin/application/cubit/admin_order_detail_cubit.dart';
+import 'package:prime_top_front/features/admin/presentation/widgets/admin_order_edit_section.dart';
+import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 import 'package:prime_top_front/features/orders/application/cubit/order_detail_cubit.dart';
 import 'package:prime_top_front/features/orders/application/cubit/order_detail_state.dart';
 import 'package:prime_top_front/features/orders/presentation/widgets/order_info_section.dart';
@@ -24,7 +27,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<OrderDetailCubit>().loadOrder(widget.orderId);
+        _loadOrder(widget.orderId);
       }
     });
   }
@@ -35,9 +38,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     if (oldWidget.orderId != widget.orderId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          context.read<OrderDetailCubit>().loadOrder(widget.orderId);
+          _loadOrder(widget.orderId);
         }
       });
+    }
+  }
+
+  void _loadOrder(int orderId) {
+    final authState = context.read<AuthCubit>().state;
+    final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+
+    if (isAdmin) {
+      context.read<AdminOrderDetailCubit>().loadOrder(orderId);
+    } else {
+      context.read<OrderDetailCubit>().loadOrder(orderId);
     }
   }
 
@@ -54,10 +68,22 @@ class _OrderDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final authState = context.read<AuthCubit>().state;
+    final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+
+    if (isAdmin) {
+      return BlocBuilder<AdminOrderDetailCubit, OrderDetailState>(
+        builder: (context, state) => _buildContent(context, theme, isDark, state),
+      );
+    }
 
     return BlocBuilder<OrderDetailCubit, OrderDetailState>(
-      builder: (context, state) {
-        if (state.isLoading) {
+      builder: (context, state) => _buildContent(context, theme, isDark, state),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, ThemeData theme, bool isDark, OrderDetailState state) {
+    if (state.isLoading) {
           return ScreenWrapper(
             child: Center(
               child: ConstrainedBox(
@@ -99,7 +125,7 @@ class _OrderDetailView extends StatelessWidget {
                         onPressed: () {
                           final orderId = GoRouterState.of(context).pathParameters['orderId'];
                           if (orderId != null) {
-                            context.read<OrderDetailCubit>().loadOrder(int.parse(orderId));
+                            _loadOrder(context, int.parse(orderId));
                           }
                         },
                         child: const Text('Повторить'),
@@ -134,6 +160,8 @@ class _OrderDetailView extends StatelessWidget {
         }
 
         final order = state.order!;
+        final authState = context.read<AuthCubit>().state;
+        final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
 
         return ScreenWrapper(
           child: Center(
@@ -146,6 +174,15 @@ class _OrderDetailView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     OrderInfoSection(order: order),
+                    if (isAdmin) ...[
+                      const SizedBox(height: 24),
+                      BlocBuilder<AdminOrderDetailCubit, OrderDetailState>(
+                        builder: (context, state) {
+                          final currentOrder = state.order ?? order;
+                          return AdminOrderEditSection(order: currentOrder);
+                        },
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     OrderItemsSection(items: order.items),
                     if (order.statusHistory.isNotEmpty) ...[
@@ -158,8 +195,16 @@ class _OrderDetailView extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
+  }
+
+  void _loadOrder(BuildContext context, int orderId) {
+    final authState = context.read<AuthCubit>().state;
+    final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+
+    if (isAdmin) {
+      context.read<AdminOrderDetailCubit>().loadOrder(orderId);
+    } else {
+      context.read<OrderDetailCubit>().loadOrder(orderId);
+    }
   }
 }
-

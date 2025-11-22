@@ -13,5 +13,3 @@ abstract class AuthRepository {
   Future<void> logout();
   void restoreToken(String? token);
 }
-
-

@@ -129,7 +129,6 @@ class _ProductDetailView extends StatelessWidget {
 
           final productDetail = state.productDetail!;
           final product = productDetail.product;
-          // Фильтруем серии, которые есть в наличии
           final availableSeries = productDetail.series.where((s) => s.inStock).toList();
 
           return Center(
@@ -160,4 +159,3 @@ class _ProductDetailView extends StatelessWidget {
     );
   }
 }
-

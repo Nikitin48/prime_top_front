@@ -99,57 +99,91 @@ class AppHeader extends StatelessWidget {
             BlocBuilder<AuthCubit, AuthState>(
               builder: (context, authState) {
                 final isAuthenticated = authState.status == AuthStatus.authenticated;
+                final isAdmin = isAuthenticated && authState.user?.isAdmin == true;
                 final showLabels = isDesktop;
                 
                 return Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (isAuthenticated) ...[
-                      SizedBox(width: spacing),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: showLabels
-                            ? IconWithLabel(
-                                icon: Icons.shopping_cart_outlined,
-                                label: 'Мои заказы',
-                                onTap: () => context.goNamed('orders'),
-                              )
-                            : _IconButton(
-                                icon: Icons.shopping_cart_outlined,
-                                tooltip: 'Мои заказы',
-                                onTap: () => context.goNamed('orders'),
-                              ),
-                      ),
-                      SizedBox(width: spacing),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: showLabels
-                            ? IconWithLabel(
-                                icon: Icons.warehouse_outlined,
-                                label: 'Остатки',
-                                onTap: () => context.goNamed('stock'),
-                              )
-                            : _IconButton(
-                                icon: Icons.warehouse_outlined,
-                                tooltip: 'Остатки',
-                                onTap: () => context.goNamed('stock'),
-                              ),
-                      ),
-                      SizedBox(width: spacing),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: showLabels
-                            ? IconWithLabel(
-                                icon: Icons.shopping_basket_outlined,
-                                label: 'Корзина',
-                                onTap: () => context.goNamed('cart'),
-                              )
-                            : _IconButton(
-                                icon: Icons.shopping_basket_outlined,
-                                tooltip: 'Корзина',
-                                onTap: () => context.goNamed('cart'),
-                              ),
-                      ),
+                      if (isAdmin) ...[
+                        SizedBox(width: spacing),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabels
+                              ? IconWithLabel(
+                                  icon: Icons.receipt_long_outlined,
+                                  label: 'Все заказы',
+                                  onTap: () => context.goNamed('admin_orders'),
+                                )
+                              : _IconButton(
+                                  icon: Icons.receipt_long_outlined,
+                                  tooltip: 'Все заказы',
+                                  onTap: () => context.goNamed('admin_orders'),
+                                ),
+                        ),
+                        SizedBox(width: spacing),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabels
+                              ? IconWithLabel(
+                                  icon: Icons.inventory_2_outlined,
+                                  label: 'Управление остатками',
+                                  onTap: () => context.goNamed('admin_stocks'),
+                                )
+                              : _IconButton(
+                                  icon: Icons.inventory_2_outlined,
+                                  tooltip: 'Управление остатками',
+                                  onTap: () => context.goNamed('admin_stocks'),
+                                ),
+                        ),
+                      ] else ...[
+                        SizedBox(width: spacing),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabels
+                              ? IconWithLabel(
+                                  icon: Icons.shopping_cart_outlined,
+                                  label: 'Мои заказы',
+                                  onTap: () => context.goNamed('orders'),
+                                )
+                              : _IconButton(
+                                  icon: Icons.shopping_cart_outlined,
+                                  tooltip: 'Мои заказы',
+                                  onTap: () => context.goNamed('orders'),
+                                ),
+                        ),
+                        SizedBox(width: spacing),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabels
+                              ? IconWithLabel(
+                                  icon: Icons.warehouse_outlined,
+                                  label: 'Остатки',
+                                  onTap: () => context.goNamed('stock'),
+                                )
+                              : _IconButton(
+                                  icon: Icons.warehouse_outlined,
+                                  tooltip: 'Остатки',
+                                  onTap: () => context.goNamed('stock'),
+                                ),
+                        ),
+                        SizedBox(width: spacing),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabels
+                              ? IconWithLabel(
+                                  icon: Icons.shopping_basket_outlined,
+                                  label: 'Корзина',
+                                  onTap: () => context.goNamed('cart'),
+                                )
+                              : _IconButton(
+                                  icon: Icons.shopping_basket_outlined,
+                                  tooltip: 'Корзина',
+                                  onTap: () => context.goNamed('cart'),
+                                ),
+                        ),
+                      ],
                     ],
                     SizedBox(width: spacing),
                     Padding(
@@ -297,4 +331,3 @@ class _IconButtonState extends State<_IconButton> {
     );
   }
 }
-

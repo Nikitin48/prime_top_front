@@ -4,7 +4,6 @@ import 'package:prime_top_front/core/network/network_client.dart';
 import 'package:prime_top_front/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:prime_top_front/features/auth/data/models/user_model.dart';
 
-/// Реализация удаленного источника данных авторизации
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({
     required NetworkClient networkClient,
@@ -98,7 +97,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 }
 
-/// Внутренний API клиент для авторизации
 class _AuthApiClient extends ApiClient {
   _AuthApiClient(NetworkClient networkClient, String baseUrl)
       : _baseUrl = baseUrl,
@@ -163,4 +161,3 @@ class _AuthApiClient extends ApiClient {
     return headers;
   }
 }
-

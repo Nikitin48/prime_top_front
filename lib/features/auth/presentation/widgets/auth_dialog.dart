@@ -36,9 +36,7 @@ class _AuthDialogState extends State<AuthDialog> {
   void _toggleMode() {
     setState(() {
       _mode = _mode == _AuthMode.login ? _AuthMode.register : _AuthMode.login;
-      // Очищаем форму при переключении режима
       _formKey.currentState?.reset();
-      // Очищаем поля
       _email = '';
       _password = '';
       _companyName = '';
@@ -401,5 +399,3 @@ class _AuthDialogState extends State<AuthDialog> {
     );
   }
 }
-
-

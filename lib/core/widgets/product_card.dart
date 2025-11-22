@@ -303,13 +303,10 @@ class _ProductCardState extends State<ProductCard> {
         ? ColorName.darkThemeCardBackground
         : ColorName.cardBackground;
 
-    // Адаптивные размеры в зависимости от размера карточки
     final cardWidth = widget.cardWidth ?? 300;
     
-    // Коэффициент масштабирования (базовый размер 300x350)
     final scaleFactor = (cardWidth / 300).clamp(0.7, 1.2);
     
-    // Адаптивные размеры элементов
     final padding = (24 * scaleFactor).clamp(16.0, 24.0);
     final colorBoxSize = (64 * scaleFactor).clamp(48.0, 64.0);
     final spacing1 = (20 * scaleFactor).clamp(12.0, 20.0);
@@ -506,6 +503,3 @@ class _ProductCardState extends State<ProductCard> {
     return luminance > 0.5 ? Colors.black : Colors.white;
   }
 }
-
-
-

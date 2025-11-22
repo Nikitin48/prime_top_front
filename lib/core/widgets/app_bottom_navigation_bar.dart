@@ -8,7 +8,6 @@ import 'package:prime_top_front/features/auth/presentation/widgets/auth_dialog.d
 class AppBottomNavigationBar extends StatelessWidget {
   const AppBottomNavigationBar({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
@@ -18,6 +17,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         final location = router.routerDelegate.currentConfiguration.uri.path;
         final authState = context.watch<AuthCubit>().state;
         final isAuthenticated = authState.status == AuthStatus.authenticated;
+        final isAdmin = isAuthenticated && authState.user?.isAdmin == true;
 
     return Container(
       decoration: BoxDecoration(
@@ -45,7 +45,22 @@ class AppBottomNavigationBar extends StatelessWidget {
                 isActive: location == '/',
                 onTap: () => context.goNamed('home'),
               ),
-              if (isAuthenticated)
+              if (isAdmin) ...[
+                _BottomNavItem(
+                  icon: Icons.receipt_long_outlined,
+                  activeIcon: Icons.receipt_long,
+                  label: 'Все заказы',
+                  isActive: location == '/admin/orders' || location.startsWith('/admin/orders/'),
+                  onTap: () => context.goNamed('admin_orders'),
+                ),
+                _BottomNavItem(
+                  icon: Icons.inventory_2_outlined,
+                  activeIcon: Icons.inventory_2,
+                  label: 'Остатки',
+                  isActive: location == '/admin/stocks' || location.startsWith('/admin/stocks/'),
+                  onTap: () => context.goNamed('admin_stocks'),
+                ),
+              ] else if (isAuthenticated) ...[
                 _BottomNavItem(
                   icon: Icons.shopping_cart_outlined,
                   activeIcon: Icons.shopping_cart,
@@ -53,7 +68,6 @@ class AppBottomNavigationBar extends StatelessWidget {
                   isActive: location == '/orders' || location.startsWith('/orders/'),
                   onTap: () => context.goNamed('orders'),
                 ),
-              if (isAuthenticated)
                 _BottomNavItem(
                   icon: Icons.warehouse_outlined,
                   activeIcon: Icons.warehouse,
@@ -61,7 +75,6 @@ class AppBottomNavigationBar extends StatelessWidget {
                   isActive: location == '/stock',
                   onTap: () => context.goNamed('stock'),
                 ),
-              if (isAuthenticated)
                 _BottomNavItem(
                   icon: Icons.shopping_basket_outlined,
                   activeIcon: Icons.shopping_basket,
@@ -69,6 +82,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                   isActive: location == '/cart',
                   onTap: () => context.goNamed('cart'),
                 ),
+              ],
               _BottomNavItem(
                 icon: Icons.person_outline,
                 activeIcon: Icons.person,
@@ -148,4 +162,3 @@ class _BottomNavItem extends StatelessWidget {
     );
   }
 }
-

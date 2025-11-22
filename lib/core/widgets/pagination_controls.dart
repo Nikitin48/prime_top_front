@@ -72,6 +72,3 @@ class PaginationControls extends StatelessWidget {
     return 'Страница ${currentPage + 1} из $totalPages';
   }
 }
-
-
-

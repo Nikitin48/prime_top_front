@@ -173,4 +173,3 @@ class CartSummary extends StatelessWidget {
     );
   }
 }
-

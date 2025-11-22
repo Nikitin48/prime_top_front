@@ -301,4 +301,3 @@ class _SeriesInfoRow extends StatelessWidget {
     );
   }
 }
-

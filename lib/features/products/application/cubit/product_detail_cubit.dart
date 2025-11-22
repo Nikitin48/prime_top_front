@@ -33,4 +33,3 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
     }
   }
 }
-

@@ -42,4 +42,3 @@ class Series {
       availableQuantity.hashCode ^
       inStock.hashCode;
 }
-

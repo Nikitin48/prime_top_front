@@ -49,4 +49,3 @@ class OrderItemModel extends OrderItem {
     );
   }
 }
-

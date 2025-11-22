@@ -679,4 +679,3 @@ class _RecentOrdersSectionState extends State<RecentOrdersSection> {
     }
   }
 }
-

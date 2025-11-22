@@ -34,4 +34,3 @@ class ProductDetailModel extends ProductDetail {
     );
   }
 }
-

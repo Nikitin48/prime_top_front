@@ -20,4 +20,3 @@ class TopProductsRepositoryImpl implements TopProductsRepository {
     }
   }
 }
-

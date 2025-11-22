@@ -16,7 +16,6 @@ class TopProductsResponseModel extends TopProductsResponse {
       results: resultsJson
           .map((productJson) {
             final productData = productJson as Map<String, dynamic>;
-            // coating_type может быть null по документации, но обычно присутствует
             final coatingTypeJson = productData['coating_type'];
             if (coatingTypeJson != null) {
               return PopularProductModel.fromJson(
@@ -24,7 +23,6 @@ class TopProductsResponseModel extends TopProductsResponse {
                 coatingTypeJson as Map<String, dynamic>,
               );
             } else {
-              // Если coating_type отсутствует, создаем дефолтный тип покрытия
               return PopularProductModel.fromJson(
                 productData,
                 {
@@ -55,4 +53,3 @@ class TopProductsResponseModel extends TopProductsResponse {
     );
   }
 }
-

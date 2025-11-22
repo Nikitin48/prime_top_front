@@ -310,4 +310,3 @@ class _CartItemCardState extends State<CartItemCard> {
     );
   }
 }
-

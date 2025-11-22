@@ -244,13 +244,13 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
 
   int _getCardsPerRow(double screenWidth) {
     if (screenWidth < 600) {
-      return 1; // Mobile
+      return 1;
     } else if (screenWidth < 900) {
-      return 2; // Tablet
+      return 2;
     } else if (screenWidth < 1200) {
-      return 3; // Small desktop
+      return 3;
     } else {
-      return 4; // Large desktop
+      return 4;
     }
   }
 
@@ -426,4 +426,3 @@ class _ScrollButton extends StatelessWidget {
     );
   }
 }
-

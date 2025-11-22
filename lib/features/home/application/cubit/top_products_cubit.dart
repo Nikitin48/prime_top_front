@@ -41,4 +41,3 @@ class TopProductsCubit extends Cubit<TopProductsState> {
     emit(const TopProductsState());
   }
 }
-

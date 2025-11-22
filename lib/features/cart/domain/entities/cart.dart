@@ -35,4 +35,3 @@ class Cart extends Equatable {
         totalPrice,
       ];
 }
-

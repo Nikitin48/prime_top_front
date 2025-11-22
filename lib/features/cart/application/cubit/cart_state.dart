@@ -18,7 +18,7 @@ class CartState extends Equatable {
   final bool isLoading;
   final String? errorMessage;
   final bool isAddingItem;
-  final String? addingItemKey; // Ключ вида "productId_seriesId" или "productId_null"
+  final String? addingItemKey;
   final bool isUpdatingItem;
   final bool isRemovingItem;
   final bool isClearing;
@@ -61,4 +61,3 @@ class CartState extends Equatable {
         isCheckingOut,
       ];
 }
-

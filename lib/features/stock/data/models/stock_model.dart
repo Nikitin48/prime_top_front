@@ -49,7 +49,6 @@ class StockModel extends Stock {
       try {
         product = ProductModel.fromJson(json['product'] as Map<String, dynamic>);
       } catch (e) {
-        // ignore
       }
     }
 
@@ -62,7 +61,6 @@ class StockModel extends Stock {
           json['coating_type'] as Map<String, dynamic>,
         );
       } catch (e) {
-        // ignore
       }
     }
 
@@ -75,7 +73,6 @@ class StockModel extends Stock {
           json['analyses'] as Map<String, dynamic>?,
         );
       } catch (e) {
-        // ignore
       }
     }
 

@@ -5,13 +5,11 @@ import 'package:http/http.dart' as http;
 import 'exceptions.dart';
 import 'network_client.dart';
 
-/// Базовый API клиент с обработкой ошибок
 abstract class ApiClient {
   final NetworkClient _client;
 
   ApiClient(this._client);
 
-  /// Выполняет GET запрос
   Future<Map<String, dynamic>> get(
     String url, {
     Map<String, String>? headers,
@@ -19,7 +17,6 @@ abstract class ApiClient {
     return _handleResponse(await _client.get(url, headers: headers));
   }
 
-  /// Выполняет POST запрос
   Future<Map<String, dynamic>> post(
     String url, {
     Map<String, String>? headers,
@@ -33,7 +30,6 @@ abstract class ApiClient {
     return _handleResponse(await _client.post(url, headers: requestHeaders, body: jsonBody));
   }
 
-  /// Выполняет PUT запрос
   Future<Map<String, dynamic>> put(
     String url, {
     Map<String, String>? headers,
@@ -47,7 +43,6 @@ abstract class ApiClient {
     return _handleResponse(await _client.put(url, headers: requestHeaders, body: jsonBody));
   }
 
-  /// Выполняет PATCH запрос
   Future<Map<String, dynamic>> patch(
     String url, {
     Map<String, String>? headers,
@@ -61,7 +56,6 @@ abstract class ApiClient {
     return _handleResponse(await _client.patch(url, headers: requestHeaders, body: jsonBody));
   }
 
-  /// Выполняет DELETE запрос
   Future<Map<String, dynamic>> delete(
     String url, {
     Map<String, String>? headers,
@@ -69,7 +63,6 @@ abstract class ApiClient {
     return _handleResponse(await _client.delete(url, headers: headers));
   }
 
-  /// Обрабатывает HTTP ответ
   Future<Map<String, dynamic>> _handleResponse(http.Response response) async {
     if (response.statusCode >= 500) {
       throw ServerException(
@@ -98,7 +91,6 @@ abstract class ApiClient {
           errorMessage = errorBody['detail'] as String;
         }
       } catch (_) {
-        // Если не удалось распарсить, используем дефолтное сообщение
       }
       throw ClientException(
         errorMessage,
@@ -127,7 +119,5 @@ abstract class ApiClient {
     }
   }
 
-  /// Устанавливает токен авторизации
   void setAuthToken(String? token);
 }
-

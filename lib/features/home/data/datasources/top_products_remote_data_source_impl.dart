@@ -51,4 +51,3 @@ class _TopProductsApiClient extends ApiClient {
     return '$base$url';
   }
 }
-

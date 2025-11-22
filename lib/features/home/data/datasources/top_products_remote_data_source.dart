@@ -3,4 +3,3 @@ import 'package:prime_top_front/features/home/data/models/top_products_response_
 abstract class TopProductsRemoteDataSource {
   Future<TopProductsResponseModel> getTopProducts();
 }
-

@@ -108,4 +108,3 @@ class ProductInfoSection extends StatelessWidget {
     );
   }
 }
-

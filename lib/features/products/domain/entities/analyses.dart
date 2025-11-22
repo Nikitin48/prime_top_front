@@ -61,7 +61,6 @@ class Analyses {
   final String? grunt;
   final String? tverdostPoKarandashu;
 
-  /// Получить все поля как Map для отображения
   Map<String, dynamic> getFields() {
     final fields = <String, dynamic>{};
     
@@ -223,4 +222,3 @@ class Analyses {
       grunt.hashCode ^
       tverdostPoKarandashu.hashCode;
 }
-

@@ -29,5 +29,3 @@ class ThemeState extends Equatable {
   @override
   List<Object?> get props => [themeMode, light, dark];
 }
-
-

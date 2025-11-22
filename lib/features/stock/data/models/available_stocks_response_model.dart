@@ -38,7 +38,6 @@ class AvailableStocksResponseModel extends AvailableStocksResponse {
                   return StockModel.fromJson(item);
                 }
               } catch (e) {
-                // ignore
               }
               return null;
             })
@@ -69,7 +68,6 @@ class AvailableStocksResponseModel extends AvailableStocksResponse {
           name: clientJson['name'] is String ? clientJson['name'] as String : '',
         );
       } catch (e) {
-        // ignore
       }
     }
 
@@ -91,7 +89,6 @@ class AvailableStocksResponseModel extends AvailableStocksResponse {
                       return StockModel.fromJson(item);
                     }
                   } catch (e) {
-                    // ignore
                   }
                   return null;
                 })
@@ -110,7 +107,6 @@ class AvailableStocksResponseModel extends AvailableStocksResponse {
           results: clientStocksResults,
         );
       } catch (e) {
-        // ignore
       }
     }
 

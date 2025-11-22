@@ -27,4 +27,3 @@ class TopProductsState extends Equatable {
   @override
   List<Object?> get props => [products, isLoading, errorMessage];
 }
-

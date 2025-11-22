@@ -151,4 +151,3 @@ class _OrdersApiClient extends ApiClient {
     return headers;
   }
 }
-

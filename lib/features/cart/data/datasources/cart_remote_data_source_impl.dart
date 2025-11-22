@@ -191,4 +191,3 @@ class _CartApiClient extends ApiClient {
     return headers;
   }
 }
-

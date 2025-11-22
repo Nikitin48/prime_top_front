@@ -123,7 +123,6 @@ class ProductsColumn extends StatelessWidget {
                   onPressed: () {
                     final coatingTypeId = state.selectedCoatingTypeId;
                     if (coatingTypeId != null) {
-                      // Получаем название типа покрытия из первого продукта
                       final coatingTypeName = state.products.isNotEmpty
                           ? state.products.first.coatingType.name
                           : null;
@@ -243,4 +242,3 @@ class _ProductCardState extends State<_ProductCard> {
     );
   }
 }
-

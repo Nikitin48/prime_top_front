@@ -42,4 +42,3 @@ class Order extends Equatable {
         statusHistory,
       ];
 }
-

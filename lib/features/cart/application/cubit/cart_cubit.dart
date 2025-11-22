@@ -189,4 +189,3 @@ class CartCubit extends Cubit<CartState> {
     emit(state.copyWith(errorMessage: null));
   }
 }
-

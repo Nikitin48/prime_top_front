@@ -13,5 +13,3 @@ class OrderHistoryPage extends StatelessWidget {
     );
   }
 }
-
-

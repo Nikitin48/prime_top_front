@@ -43,4 +43,3 @@ class ProductsState extends Equatable {
   @override
   List<Object?> get props => [products, isLoading, isLoadingMore, errorMessage, selectedCoatingTypeId, searchQuery, totalCount];
 }
-

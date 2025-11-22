@@ -76,4 +76,3 @@ class ProductsRepositoryImpl implements ProductsRepository {
     }
   }
 }
-

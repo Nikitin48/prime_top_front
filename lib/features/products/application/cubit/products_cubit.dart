@@ -179,4 +179,3 @@ class ProductsCubit extends Cubit<ProductsState> {
     emit(const ProductsState());
   }
 }
-

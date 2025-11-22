@@ -27,4 +27,3 @@ class CoatingTypesState extends Equatable {
   @override
   List<Object?> get props => [coatingTypes, isLoading, errorMessage];
 }
-

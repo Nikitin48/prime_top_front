@@ -27,7 +27,6 @@ class OrdersState extends Equatable {
   final bool isLoading;
   final String? errorMessage;
 
-  // filters
   final String? status;
   final String? search;
   final String? client;

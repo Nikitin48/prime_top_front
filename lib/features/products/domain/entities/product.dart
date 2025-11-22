@@ -34,4 +34,3 @@ class Product {
       price.hashCode ^
       coatingType.hashCode;
 }
-

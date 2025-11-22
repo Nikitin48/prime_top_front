@@ -55,13 +55,42 @@ class UserInfoCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'Аккаунт пользователя',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: isDark
-                      ? ColorName.darkThemeTextPrimary
-                      : ColorName.textPrimary,
-                  fontWeight: FontWeight.w800,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.isAdmin ? 'Аккаунт администратора' : 'Аккаунт пользователя',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: isDark
+                            ? ColorName.darkThemeTextPrimary
+                            : ColorName.textPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    if (user.isAdmin) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: ColorName.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: ColorName.primary.withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          'Администратор',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: ColorName.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],
@@ -88,6 +117,16 @@ class UserInfoCard extends StatelessWidget {
               icon: Icons.calendar_today_outlined,
               label: 'Дата регистрации',
               value: formatDate(user.createdAt),
+              isDark: isDark,
+              theme: theme,
+            ),
+          ],
+          if (user.isAdmin) ...[
+            const SizedBox(height: 16),
+            ProfileInfoRow(
+              icon: Icons.admin_panel_settings,
+              label: 'Права доступа',
+              value: 'Администратор',
               isDark: isDark,
               theme: theme,
             ),

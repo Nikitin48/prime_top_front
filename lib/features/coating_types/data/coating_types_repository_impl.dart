@@ -20,4 +20,3 @@ class CoatingTypesRepositoryImpl implements CoatingTypesRepository {
     }
   }
 }
-

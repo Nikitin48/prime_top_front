@@ -1,47 +1,27 @@
-// dart format width=120
-
-/// GENERATED CODE - DO NOT MODIFY BY HAND
-/// *****************************************************
-///  FlutterGen
-/// *****************************************************
-
-// coverage:ignore-file
-// ignore_for_file: type=lint
-// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
 import 'package:flutter/widgets.dart';
 
 class $AssetsCountingTypesGen {
   const $AssetsCountingTypesGen();
 
-  /// File path: assets/counting_types/emal-polief-sm.png
   AssetGenImage get emalPoliefSm => const AssetGenImage('assets/counting_types/emal-polief-sm.png');
 
-  /// File path: assets/counting_types/emal-polief-tex.png
   AssetGenImage get emalPoliefTex => const AssetGenImage('assets/counting_types/emal-polief-tex.png');
 
-  /// File path: assets/counting_types/emal-polief.png
   AssetGenImage get emalPolief => const AssetGenImage('assets/counting_types/emal-polief.png');
 
-  /// File path: assets/counting_types/emal-poliur-tex.png
   AssetGenImage get emalPoliurTex => const AssetGenImage('assets/counting_types/emal-poliur-tex.png');
 
-  /// File path: assets/counting_types/emal-poliur.png
   AssetGenImage get emalPoliur => const AssetGenImage('assets/counting_types/emal-poliur.png');
 
-  /// File path: assets/counting_types/emal-polivin.png
   AssetGenImage get emalPolivin => const AssetGenImage('assets/counting_types/emal-polivin.png');
 
-  /// File path: assets/counting_types/emal-pvdf.png
   AssetGenImage get emalPvdf => const AssetGenImage('assets/counting_types/emal-pvdf.png');
 
-  /// File path: assets/counting_types/licevaya-poly.png
   AssetGenImage get licevayaPoly => const AssetGenImage('assets/counting_types/licevaya-poly.png');
 
-  /// File path: assets/counting_types/poliur-emal.png
   AssetGenImage get poliurEmal => const AssetGenImage('assets/counting_types/poliur-emal.png');
 
-  /// List of all assets
   List<AssetGenImage> get values => [
     emalPoliefSm,
     emalPoliefTex,
@@ -58,10 +38,8 @@ class $AssetsCountingTypesGen {
 class $AssetsLogoGen {
   const $AssetsLogoGen();
 
-  /// File path: assets/logo/logo_prime_top.png
   AssetGenImage get logoPrimeTop => const AssetGenImage('assets/logo/logo_prime_top.png');
 
-  /// List of all assets
   List<AssetGenImage> get values => [logoPrimeTop];
 }
 
@@ -150,5 +128,3 @@ class AssetGenImageAnimation {
   final Duration duration;
   final int frames;
 }
-
-

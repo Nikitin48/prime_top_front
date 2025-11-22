@@ -41,15 +41,49 @@ class OrderModel extends Order {
       shippedAt: parseNullableDate(json['shipped_at'] as String?),
       deliveredAt: parseNullableDate(json['delivered_at'] as String?),
       cancelReason: json['cancel_reason'] as String?,
-      items: (json['items'] as List<dynamic>)
-          .map((item) => OrderItemModel.fromJson(item as Map<String, dynamic>))
-          .toList(),
-      totalQuantity: (json['total_quantity'] as num).toDouble(),
-      statusHistory: (json['status_history'] as List<dynamic>)
-          .map((item) => OrderStatusHistoryModel.fromJson(
-                item as Map<String, dynamic>,
-              ))
-          .toList(),
+      items: (json['items'] as List<dynamic>?)
+              ?.map((item) => OrderItemModel.fromJson(item as Map<String, dynamic>))
+              .toList() ??
+          [],
+      totalQuantity: (json['total_quantity'] as num?)?.toDouble() ?? 0.0,
+      statusHistory: (json['status_history'] as List<dynamic>?)
+              ?.map((item) => OrderStatusHistoryModel.fromJson(
+                    item as Map<String, dynamic>,
+                  ))
+              .toList() ??
+          [],
+    );
+  }
+
+  factory OrderModel.fromAdminListJson(Map<String, dynamic> json) {
+    DateTime parseDate(String dateString) {
+      try {
+        return DateTime.parse(dateString);
+      } catch (_) {
+        throw FormatException('Неверный формат даты: $dateString');
+      }
+    }
+
+    DateTime? parseNullableDate(String? dateString) {
+      if (dateString == null) return null;
+      return parseDate(dateString);
+    }
+
+    return OrderModel(
+      id: json['id'] is int ? json['id'] as int : 0,
+      client: ClientModel.fromJson(
+        json['client'] as Map<String, dynamic>? ?? {},
+      ),
+      status: json['status'] as String? ?? '',
+      createdAt: json['created_at'] != null
+          ? parseDate(json['created_at'] as String)
+          : DateTime.now(),
+      shippedAt: parseNullableDate(json['shipped_at'] as String?),
+      deliveredAt: parseNullableDate(json['delivered_at'] as String?),
+      cancelReason: json['cancel_reason'] as String?,
+      items: [],
+      totalQuantity: (json['total_quantity'] as num?)?.toDouble() ?? 0.0,
+      statusHistory: [],
     );
   }
 
@@ -89,4 +123,3 @@ class OrderModel extends Order {
     );
   }
 }
-

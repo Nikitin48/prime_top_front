@@ -29,6 +29,11 @@ import 'package:prime_top_front/features/home/data/datasources/top_products_remo
 import 'package:prime_top_front/features/stock/application/cubit/stock_cubit.dart';
 import 'package:prime_top_front/features/stock/data/stock_repository_impl.dart';
 import 'package:prime_top_front/features/stock/data/datasources/stock_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/admin/application/cubit/admin_stocks_cubit.dart';
+import 'package:prime_top_front/features/admin/application/cubit/admin_orders_cubit.dart';
+import 'package:prime_top_front/features/admin/application/cubit/admin_order_detail_cubit.dart';
+import 'package:prime_top_front/features/admin/data/admin_repository_impl.dart';
+import 'package:prime_top_front/features/admin/data/datasources/admin_remote_data_source_impl.dart';
 
 void main() {
   runApp(const App());
@@ -39,10 +44,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Инициализация зависимостей
     final networkClient = HttpClient(baseUrl: ApiConfig.baseUrl);
     
-    // Auth dependencies
     final authStorageService = AuthStorageService();
     final authRemoteDataSource = AuthRemoteDataSourceImpl(
       networkClient: networkClient,
@@ -50,28 +53,24 @@ class App extends StatelessWidget {
     );
     final authRepository = AuthRepositoryImpl(authRemoteDataSource);
 
-    // Coating types dependencies
     final coatingTypesRemoteDataSource = CoatingTypesRemoteDataSourceImpl(
       networkClient: networkClient,
       baseUrl: ApiConfig.baseUrl,
     );
     final coatingTypesRepository = CoatingTypesRepositoryImpl(coatingTypesRemoteDataSource);
 
-    // Products dependencies
     final productsRemoteDataSource = ProductsRemoteDataSourceImpl(
       networkClient: networkClient,
       baseUrl: ApiConfig.baseUrl,
     );
     final productsRepository = ProductsRepositoryImpl(productsRemoteDataSource);
 
-    // Top products dependencies
     final topProductsRemoteDataSource = TopProductsRemoteDataSourceImpl(
       networkClient: networkClient,
       baseUrl: ApiConfig.baseUrl,
     );
     final topProductsRepository = TopProductsRepositoryImpl(topProductsRemoteDataSource);
 
-    // Stock dependencies
     final stockRemoteDataSource = StockRemoteDataSourceImpl(
       networkClient: networkClient,
       baseUrl: ApiConfig.baseUrl,
@@ -138,6 +137,42 @@ class App extends StatelessWidget {
         ),
         BlocProvider<StockCubit>(
           create: (_) => StockCubit(stockRepository),
+        ),
+        BlocProvider<AdminStocksCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final adminRemoteDataSource = AdminRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final adminRepository = AdminRepositoryImpl(adminRemoteDataSource);
+            return AdminStocksCubit(adminRepository);
+          },
+        ),
+        BlocProvider<AdminOrdersCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final adminRemoteDataSource = AdminRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final adminRepository = AdminRepositoryImpl(adminRemoteDataSource);
+            return AdminOrdersCubit(adminRepository);
+          },
+        ),
+        BlocProvider<AdminOrderDetailCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final adminRemoteDataSource = AdminRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final adminRepository = AdminRepositoryImpl(adminRemoteDataSource);
+            return AdminOrderDetailCubit(adminRepository);
+          },
         ),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(

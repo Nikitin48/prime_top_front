@@ -152,4 +152,3 @@ class SeriesCard extends StatelessWidget {
     );
   }
 }
-

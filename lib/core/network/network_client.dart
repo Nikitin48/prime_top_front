@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 
-/// Интерфейс для HTTP клиента
 abstract class NetworkClient {
   Future<http.Response> get(
     String url, {
@@ -31,7 +30,6 @@ abstract class NetworkClient {
   });
 }
 
-/// Реализация HTTP клиента на базе http пакета
 class HttpClient implements NetworkClient {
   HttpClient({
     String? baseUrl,
@@ -125,4 +123,3 @@ class HttpClient implements NetworkClient {
     _client.close();
   }
 }
-

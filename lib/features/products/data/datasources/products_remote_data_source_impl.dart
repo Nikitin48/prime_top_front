@@ -169,4 +169,3 @@ class _ProductsApiClient extends ApiClient {
     return '$base$url';
   }
 }
-

@@ -27,4 +27,3 @@ class ProductDetail {
       series.hashCode ^
       seriesCount.hashCode;
 }
-

@@ -111,9 +111,10 @@ class OrderCard extends StatelessWidget {
         onTap: onTap ?? () => context.goNamed('order_detail', pathParameters: {'orderId': order.id.toString()}),
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +130,7 @@ class OrderCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         Text(
                           'Создан ${_formatDate(order.createdAt)}',
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -137,7 +138,7 @@ class OrderCard extends StatelessWidget {
                           ),
                         ),
                         if (clientBadge.name.isNotEmpty || clientBadge.email.isNotEmpty) ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
@@ -194,8 +195,8 @@ class OrderCard extends StatelessWidget {
                   _StatusBadge(label: _getStatusText(order.status), color: statusColor),
                 ],
               ),
-              const SizedBox(height: 16),
-              const Divider(height: 24),
+              const SizedBox(height: 14),
+              const Divider(height: 20),
               if (colorMarkers.isNotEmpty) ...[
                 Wrap(
                   spacing: 6,
@@ -214,10 +215,10 @@ class OrderCard extends StatelessWidget {
                 activeIndex: currentStep,
                 color: statusColor,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
               Wrap(
-                spacing: 12,
-                runSpacing: 12,
+                spacing: 10,
+                runSpacing: 10,
                 children: [
                   _InfoItem(
                     icon: Icons.calendar_today,
@@ -254,9 +255,9 @@ class OrderCard extends StatelessWidget {
                 ],
               ),
               if (order.cancelReason != null) ...[
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: ColorName.danger.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
@@ -439,7 +440,7 @@ class _InfoItem extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: 180),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isDark
               ? ColorName.darkThemeBackgroundSecondary.withOpacity(0.8)
@@ -453,19 +454,19 @@ class _InfoItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 32,
-              height: 32,
+              width: 28,
+              height: 28,
               decoration: BoxDecoration(
                 color: isDark ? ColorName.darkThemeBorderSoft : Colors.white,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 icon,
-                size: 18,
+                size: 16,
                 color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

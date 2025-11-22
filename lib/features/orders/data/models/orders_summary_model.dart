@@ -35,4 +35,3 @@ class OrdersSummaryModel extends OrdersSummary {
     );
   }
 }
-

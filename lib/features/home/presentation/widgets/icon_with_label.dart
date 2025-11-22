@@ -56,5 +56,3 @@ class _IconWithLabelState extends State<IconWithLabel> {
     );
   }
 }
-
-

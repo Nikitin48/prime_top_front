@@ -12,6 +12,7 @@ class User extends Equatable {
     this.createdAt,
     this.token,
     this.expiresIn,
+    this.isAdmin = false,
   });
 
   final String id;
@@ -22,9 +23,8 @@ class User extends Equatable {
   final String? createdAt;
   final String? token;
   final int? expiresIn;
+  final bool isAdmin;
 
   @override
-  List<Object?> get props => [id, email, client, firstName, lastName, createdAt, token, expiresIn];
+  List<Object?> get props => [id, email, client, firstName, lastName, createdAt, token, expiresIn, isAdmin];
 }
-
-

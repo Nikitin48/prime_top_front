@@ -24,4 +24,3 @@ class CoatingType {
   @override
   String toString() => '$name ($nomenclature)';
 }
-

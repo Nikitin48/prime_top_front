@@ -14,4 +14,3 @@ class MenuState extends Equatable {
   @override
   List<Object?> get props => [isOpen];
 }
-

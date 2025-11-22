@@ -19,6 +19,9 @@ import 'package:prime_top_front/features/products/presentation/pages/product_det
 import 'package:prime_top_front/features/products/presentation/pages/products_by_coating_type_page.dart';
 import 'package:prime_top_front/features/products/presentation/pages/search_results_page.dart';
 import 'package:prime_top_front/features/cart/presentation/pages/cart_page.dart';
+import 'package:prime_top_front/features/admin/presentation/pages/admin_stocks_page.dart';
+import 'package:prime_top_front/features/admin/presentation/pages/admin_orders_page.dart';
+import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 
 final GoRouter appRouter = GoRouter(
   routes: <RouteBase>[
@@ -184,9 +187,31 @@ final GoRouter appRouter = GoRouter(
           name: 'cart',
           pageBuilder: (context, state) => const NoTransitionPage(child: CartPage()),
         ),
+        GoRoute(
+          path: '/admin/stocks',
+          name: 'admin_stocks',
+          pageBuilder: (context, state) {
+            final authState = context.read<AuthCubit>().state;
+            final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+            if (!isAdmin) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            return const NoTransitionPage(child: AdminStocksPage());
+          },
+        ),
+        GoRoute(
+          path: '/admin/orders',
+          name: 'admin_orders',
+          pageBuilder: (context, state) {
+            final authState = context.read<AuthCubit>().state;
+            final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+            if (!isAdmin) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            return const NoTransitionPage(child: AdminOrdersPage());
+          },
+        ),
       ],
     ),
   ],
 );
-
-

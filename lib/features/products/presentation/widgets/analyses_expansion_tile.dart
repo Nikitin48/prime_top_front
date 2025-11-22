@@ -123,4 +123,3 @@ class _AnalysesExpansionTileState extends State<AnalysesExpansionTile> {
     return value.toString();
   }
 }
-

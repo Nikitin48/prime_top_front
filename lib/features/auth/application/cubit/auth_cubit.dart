@@ -18,18 +18,14 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _repository;
   final AuthStorageService _storageService;
 
-  /// Загружает сохраненного пользователя при инициализации
   Future<void> _loadSavedUser() async {
     try {
       final savedUser = await _storageService.loadUser();
       if (savedUser != null && savedUser.token != null) {
-        // Восстанавливаем токен в API клиенте
         _repository.restoreToken(savedUser.token);
         emit(AuthState.authenticated(savedUser));
       }
     } catch (e) {
-      // Игнорируем ошибки при загрузке сохраненного пользователя
-      // Оставляем состояние unauthenticated
     }
   }
 
@@ -37,7 +33,6 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: AuthStatus.loading, errorMessage: null));
     try {
       final user = await _repository.login(email: email, password: password);
-      // Сохраняем пользователя после успешного входа
       if (user is UserModel) {
         await _storageService.saveUser(user);
       }
@@ -72,7 +67,6 @@ class AuthCubit extends Cubit<AuthState> {
         firstName: firstName,
         lastName: lastName,
       );
-      // Сохраняем пользователя после успешной регистрации
       if (user is UserModel) {
         await _storageService.saveUser(user);
       }
@@ -91,10 +85,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> logout() async {
     await _repository.logout();
-    // Очищаем сохраненные данные при выходе
     await _storageService.clearUser();
     emit(const AuthState.unauthenticated());
   }
 }
-
-

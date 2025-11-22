@@ -5,7 +5,6 @@ import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart'
 import 'package:prime_top_front/features/auth/presentation/widgets/auth_dialog.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
 
-
 class HomeHeroSection extends StatelessWidget {
   const HomeHeroSection({super.key});
 
@@ -170,4 +169,3 @@ class _HeroFact extends StatelessWidget {
     );
   }
 }
-

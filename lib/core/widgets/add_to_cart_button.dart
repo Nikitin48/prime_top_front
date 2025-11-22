@@ -43,12 +43,19 @@ class AddToCartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CartCubit, CartState>(
-      builder: (context, cartState) {
-        final itemKey = seriesId != null ? '${productId}_$seriesId' : '${productId}_null';
-        final isAddingThisItem = cartState.isAddingItem && cartState.addingItemKey == itemKey;
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, authState) {
+        final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+        if (isAdmin) {
+          return const SizedBox.shrink();
+        }
 
-        return Container(
+        return BlocBuilder<CartCubit, CartState>(
+          builder: (context, cartState) {
+            final itemKey = seriesId != null ? '${productId}_$seriesId' : '${productId}_null';
+            final isAddingThisItem = cartState.isAddingItem && cartState.addingItemKey == itemKey;
+
+            return Container(
           width: size,
           height: size,
           decoration: BoxDecoration(
@@ -81,8 +88,9 @@ class AddToCartButton extends StatelessWidget {
             ),
           ),
         );
+          },
+        );
       },
     );
   }
 }
-

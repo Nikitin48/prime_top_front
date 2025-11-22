@@ -75,4 +75,3 @@ class SeriesListSection extends StatelessWidget {
     );
   }
 }
-

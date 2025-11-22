@@ -3,4 +3,3 @@ import 'package:prime_top_front/features/home/domain/entities/top_products_respo
 abstract class TopProductsRepository {
   Future<TopProductsResponse> getTopProducts();
 }
-

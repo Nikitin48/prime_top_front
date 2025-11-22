@@ -50,4 +50,3 @@ class SeriesModel extends Series {
     );
   }
 }
-
