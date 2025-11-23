@@ -21,6 +21,7 @@ import 'package:prime_top_front/features/products/presentation/pages/search_resu
 import 'package:prime_top_front/features/cart/presentation/pages/cart_page.dart';
 import 'package:prime_top_front/features/admin/presentation/pages/admin_stocks_page.dart';
 import 'package:prime_top_front/features/admin/presentation/pages/admin_orders_page.dart';
+import 'package:prime_top_front/features/analytics/presentation/pages/analytics_dashboard_page.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -209,6 +210,18 @@ final GoRouter appRouter = GoRouter(
               return const NoTransitionPage(child: HomePage());
             }
             return const NoTransitionPage(child: AdminOrdersPage());
+          },
+        ),
+        GoRoute(
+          path: '/admin/analytics',
+          name: 'analytics',
+          pageBuilder: (context, state) {
+            final authState = context.read<AuthCubit>().state;
+            final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+            if (!isAdmin) {
+              return const NoTransitionPage(child: HomePage());
+            }
+            return const NoTransitionPage(child: AnalyticsDashboardPage());
           },
         ),
       ],

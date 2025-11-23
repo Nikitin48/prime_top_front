@@ -34,6 +34,9 @@ import 'package:prime_top_front/features/admin/application/cubit/admin_orders_cu
 import 'package:prime_top_front/features/admin/application/cubit/admin_order_detail_cubit.dart';
 import 'package:prime_top_front/features/admin/data/admin_repository_impl.dart';
 import 'package:prime_top_front/features/admin/data/datasources/admin_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/analytics/application/cubit/analytics_cubit.dart';
+import 'package:prime_top_front/features/analytics/data/analytics_repository_impl.dart';
+import 'package:prime_top_front/features/analytics/data/datasources/analytics_remote_data_source_impl.dart';
 
 void main() {
   runApp(const App());
@@ -172,6 +175,18 @@ class App extends StatelessWidget {
             );
             final adminRepository = AdminRepositoryImpl(adminRemoteDataSource);
             return AdminOrderDetailCubit(adminRepository);
+          },
+        ),
+        BlocProvider<AnalyticsCubit>(
+          create: (context) {
+            final authCubit = context.read<AuthCubit>();
+            final analyticsRemoteDataSource = AnalyticsRemoteDataSourceImpl(
+              networkClient: networkClient,
+              baseUrl: ApiConfig.baseUrl,
+              getAuthToken: () => authCubit.state.user?.token,
+            );
+            final analyticsRepository = AnalyticsRepositoryImpl(analyticsRemoteDataSource);
+            return AnalyticsCubit(analyticsRepository);
           },
         ),
       ],

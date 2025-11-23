@@ -137,6 +137,21 @@ class AppHeader extends StatelessWidget {
                                   onTap: () => context.goNamed('admin_stocks'),
                                 ),
                         ),
+                        SizedBox(width: spacing),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: showLabels
+                              ? IconWithLabel(
+                                  icon: Icons.analytics_outlined,
+                                  label: 'Анализ',
+                                  onTap: () => context.goNamed('analytics'),
+                                )
+                              : _IconButton(
+                                  icon: Icons.analytics_outlined,
+                                  tooltip: 'Анализ',
+                                  onTap: () => context.goNamed('analytics'),
+                                ),
+                        ),
                       ] else ...[
                         SizedBox(width: spacing),
                         Padding(
