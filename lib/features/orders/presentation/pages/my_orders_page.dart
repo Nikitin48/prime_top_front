@@ -8,6 +8,7 @@ import 'package:prime_top_front/features/orders/domain/entities/order.dart';
 import 'package:prime_top_front/features/orders/domain/entities/orders_response.dart';
 import 'package:prime_top_front/features/orders/presentation/widgets/order_card.dart';
 import 'package:prime_top_front/features/orders/presentation/widgets/orders_summary_section.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 bool _isDelivered(String status) {
   final normalized = status.toLowerCase();
@@ -405,7 +406,107 @@ class _Sidebar extends StatelessWidget {
                 ),
               ],
       ),
-      child: OrdersSummarySection(summary: ordersResponse.summary),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const _BotBanner(),
+          const SizedBox(height: 12),
+          OrdersSummarySection(summary: ordersResponse.summary),
+        ],
+      ),
+    );
+  }
+}
+
+class _BotBanner extends StatelessWidget {
+  const _BotBanner();
+
+  static const String _botLink = "https://t.me/prime_top_bot";
+
+  Future<void> _openBot() async {
+    final uri = Uri.parse(_botLink);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? ColorName.darkThemeBackgroundSecondary : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft),
+        gradient: isDark
+            ? null
+            : const LinearGradient(
+                colors: [Color(0xFFE8F0FF), Color(0xFFF9F1EC)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Уведомления в Telegram',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : ColorName.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Подключите бота, чтобы мгновенно получать изменения статусов заказов.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: isDark ? Colors.white70 : ColorName.textSecondary,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Container(
+                height: 48,
+                width: 48,
+                decoration: BoxDecoration(
+                  color: isDark ? ColorName.darkThemeBackground : Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.telegram, color: ColorName.primary, size: 26),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _openBot,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    backgroundColor: isDark ? ColorName.primary.withOpacity(0.85) : ColorName.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: const Icon(Icons.open_in_new, size: 18),
+                  label: const Text(
+                    'Открыть',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
