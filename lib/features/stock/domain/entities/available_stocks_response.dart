@@ -2,40 +2,34 @@ import 'package:prime_top_front/features/stock/domain/entities/stock.dart';
 
 class AvailableStocksResponse {
   const AvailableStocksResponse({
-    required this.publicStocks,
-    this.client,
-    this.clientStocks,
-  });
-
-  final PublicStocksData publicStocks;
-  final ClientInfo? client;
-  final ClientStocksData? clientStocks;
-}
-
-class PublicStocksData {
-  const PublicStocksData({
+    required this.series,
     required this.count,
     required this.totalCount,
-    required this.totalQuantity,
-    required this.results,
+    this.client,
+    this.summaryByNomenclature,
   });
 
+  final List<Stock> series;
   final int count;
   final int totalCount;
-  final double totalQuantity;
-  final List<Stock> results;
+  final ClientInfo? client;
+  final List<SummaryByNomenclature>? summaryByNomenclature;
 }
 
-class ClientStocksData {
-  const ClientStocksData({
-    required this.count,
+class SummaryByNomenclature {
+  const SummaryByNomenclature({
+    required this.productName,
+    required this.coatingTypeName,
+    required this.nomenclature,
+    required this.seriesCount,
     required this.totalQuantity,
-    required this.results,
   });
 
-  final int count;
+  final String productName;
+  final String coatingTypeName;
+  final String nomenclature;
+  final int seriesCount;
   final double totalQuantity;
-  final List<Stock> results;
 }
 
 class ClientInfo {

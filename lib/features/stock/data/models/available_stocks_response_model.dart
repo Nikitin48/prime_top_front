@@ -3,62 +3,41 @@ import 'package:prime_top_front/features/stock/domain/entities/available_stocks_
 
 class AvailableStocksResponseModel extends AvailableStocksResponse {
   const AvailableStocksResponseModel({
-    required super.publicStocks,
+    required super.series,
+    required super.count,
+    required super.totalCount,
     super.client,
-    super.clientStocks,
+    super.summaryByNomenclature,
   });
 
   factory AvailableStocksResponseModel.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) {
-      return AvailableStocksResponseModel(
-        publicStocks: const PublicStocksDataModel(
-          count: 0,
-          totalCount: 0,
-          totalQuantity: 0.0,
-          results: [],
-        ),
+      return const AvailableStocksResponseModel(
+        series: [],
+        count: 0,
+        totalCount: 0,
       );
     }
 
-    Map<String, dynamic> publicStocksJson = {};
-    if (json['public_stocks'] != null) {
-      if (json['public_stocks'] is Map<String, dynamic>) {
-        publicStocksJson = json['public_stocks'] as Map<String, dynamic>;
-      }
-    }
-
-    List<StockModel> publicStocksResults = [];
-    if (publicStocksJson.containsKey('results')) {
-      final resultsValue = publicStocksJson['results'];
-      if (resultsValue is List) {
-        publicStocksResults = resultsValue
-            .map((item) {
-              try {
-                if (item is Map<String, dynamic>) {
-                  return StockModel.fromJson(item);
-                }
-              } catch (e) {
+    // Парсинг серий
+    List<StockModel> seriesList = [];
+    if (json['series'] != null && json['series'] is List) {
+      final seriesValue = json['series'] as List;
+      seriesList = seriesValue
+          .map((item) {
+            try {
+              if (item is Map<String, dynamic>) {
+                return StockModel.fromJson(item);
               }
-              return null;
-            })
-            .whereType<StockModel>()
-            .toList();
-      }
+            } catch (e) {
+            }
+            return null;
+          })
+          .whereType<StockModel>()
+          .toList();
     }
 
-    final publicStocks = PublicStocksDataModel(
-      count: publicStocksJson['count'] is int
-          ? publicStocksJson['count'] as int
-          : 0,
-      totalCount: publicStocksJson['total_count'] is int
-          ? publicStocksJson['total_count'] as int
-          : 0,
-      totalQuantity: publicStocksJson['total_quantity'] is num
-          ? (publicStocksJson['total_quantity'] as num).toDouble()
-          : 0.0,
-      results: publicStocksResults,
-    );
-
+    // Парсинг клиента
     ClientInfoModel? client;
     if (json['client'] != null && json['client'] is Map<String, dynamic>) {
       try {
@@ -71,97 +50,87 @@ class AvailableStocksResponseModel extends AvailableStocksResponse {
       }
     }
 
-    ClientStocksDataModel? clientStocks;
-    if (json.containsKey('client_stocks') &&
-        json['client_stocks'] != null &&
-        json['client_stocks'] is Map<String, dynamic>) {
-      try {
-        final clientStocksJson = json['client_stocks'] as Map<String, dynamic>;
-        
-        List<StockModel> clientStocksResults = [];
-        if (clientStocksJson.containsKey('results')) {
-          final resultsValue = clientStocksJson['results'];
-          if (resultsValue is List) {
-            clientStocksResults = resultsValue
-                .map((item) {
-                  try {
-                    if (item is Map<String, dynamic>) {
-                      return StockModel.fromJson(item);
-                    }
-                  } catch (e) {
-                  }
-                  return null;
-                })
-                .whereType<StockModel>()
-                .toList();
-          }
-        }
-
-        clientStocks = ClientStocksDataModel(
-          count: clientStocksJson['count'] is int
-              ? clientStocksJson['count'] as int
-              : 0,
-          totalQuantity: clientStocksJson['total_quantity'] is num
-              ? (clientStocksJson['total_quantity'] as num).toDouble()
-              : 0.0,
-          results: clientStocksResults,
-        );
-      } catch (e) {
-      }
+    // Парсинг summary_by_nomenclature
+    List<SummaryByNomenclatureModel>? summaryList;
+    if (json['summary_by_nomenclature'] != null &&
+        json['summary_by_nomenclature'] is List) {
+      final summaryValue = json['summary_by_nomenclature'] as List;
+      summaryList = summaryValue
+          .map((item) {
+            try {
+              if (item is Map<String, dynamic>) {
+                return SummaryByNomenclatureModel.fromJson(item);
+              }
+            } catch (e) {
+            }
+            return null;
+          })
+          .whereType<SummaryByNomenclatureModel>()
+          .toList();
     }
 
+    // Парсинг пагинации
+    final count = json['count'] is int ? json['count'] as int : seriesList.length;
+    final totalCount = json['total_count'] is int ? json['total_count'] as int : seriesList.length;
+
     return AvailableStocksResponseModel(
-      publicStocks: publicStocks,
+      series: seriesList,
+      count: count,
+      totalCount: totalCount,
       client: client,
-      clientStocks: clientStocks,
+      summaryByNomenclature: summaryList,
     );
   }
 
   AvailableStocksResponse toEntity() {
     return AvailableStocksResponse(
-      publicStocks: publicStocks is PublicStocksDataModel
-          ? (publicStocks as PublicStocksDataModel).toEntity()
-          : publicStocks,
+      series: series.map((stock) => (stock as StockModel).toEntity()).toList(),
+      count: count,
+      totalCount: totalCount,
       client: client is ClientInfoModel
           ? (client as ClientInfoModel).toEntity()
           : client,
-      clientStocks: clientStocks is ClientStocksDataModel
-          ? (clientStocks as ClientStocksDataModel).toEntity()
-          : clientStocks,
+      summaryByNomenclature: summaryByNomenclature
+          ?.map((summary) => (summary as SummaryByNomenclatureModel).toEntity())
+          .toList(),
     );
   }
 }
 
-class PublicStocksDataModel extends PublicStocksData {
-  const PublicStocksDataModel({
-    required super.count,
-    required super.totalCount,
+class SummaryByNomenclatureModel extends SummaryByNomenclature {
+  const SummaryByNomenclatureModel({
+    required super.productName,
+    required super.coatingTypeName,
+    required super.nomenclature,
+    required super.seriesCount,
     required super.totalQuantity,
-    required super.results,
   });
 
-  PublicStocksData toEntity() {
-    return PublicStocksData(
-      count: count,
-      totalCount: totalCount,
-      totalQuantity: totalQuantity,
-      results: results.map((stock) => (stock as StockModel).toEntity()).toList(),
+  factory SummaryByNomenclatureModel.fromJson(Map<String, dynamic> json) {
+    return SummaryByNomenclatureModel(
+      productName: json['product_name'] is String
+          ? json['product_name'] as String
+          : '',
+      coatingTypeName: json['coating_type_name'] is String
+          ? json['coating_type_name'] as String
+          : '',
+      nomenclature:
+          json['nomenclature'] is String ? json['nomenclature'] as String : '',
+      seriesCount:
+          json['series_count'] is int ? json['series_count'] as int : 0,
+      totalQuantity: json['total_quantity'] is num
+          ? (json['total_quantity'] as num).toDouble()
+          : 0.0,
     );
   }
-}
 
-class ClientStocksDataModel extends ClientStocksData {
-  const ClientStocksDataModel({
-    required super.count,
-    required super.totalQuantity,
-    required super.results,
-  });
-
-  ClientStocksData toEntity() {
-    return ClientStocksData(
-      count: count,
+  SummaryByNomenclature toEntity() {
+    return SummaryByNomenclature(
+      productName: productName,
+      coatingTypeName: coatingTypeName,
+      nomenclature: nomenclature,
+      seriesCount: seriesCount,
       totalQuantity: totalQuantity,
-      results: results.map((stock) => (stock as StockModel).toEntity()).toList(),
     );
   }
 }

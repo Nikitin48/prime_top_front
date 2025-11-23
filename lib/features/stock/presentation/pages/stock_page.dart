@@ -18,7 +18,28 @@ class _StockPageState extends State<StockPage> {
   final _colorController = TextEditingController();
   final _coatingTypeController = TextEditingController();
   final _seriesController = TextEditingController();
-  final _minQuantityController = TextEditingController();
+  final _seriesIdController = TextEditingController();
+  final _analysesBleskController = TextEditingController();
+  final _analysesVyazkostController = TextEditingController();
+  final _analysesDeltaEController = TextEditingController();
+  final _analysesDeltaLController = TextEditingController();
+  final _analysesDeltaAController = TextEditingController();
+  final _analysesDeltaBController = TextEditingController();
+  final _minBleskController = TextEditingController();
+  final _maxBleskController = TextEditingController();
+  final _minVyazkostController = TextEditingController();
+  final _maxVyazkostController = TextEditingController();
+  final _minDeltaEController = TextEditingController();
+  final _maxDeltaEController = TextEditingController();
+  final _minDeltaLController = TextEditingController();
+  final _maxDeltaLController = TextEditingController();
+  final _minDeltaAController = TextEditingController();
+  final _maxDeltaAController = TextEditingController();
+  final _minDeltaBController = TextEditingController();
+  final _maxDeltaBController = TextEditingController();
+
+  bool _includePublic = true;
+  bool _personalOnly = false;
 
   int _currentPage = 0;
   static const int _pageSize = 20;
@@ -34,7 +55,25 @@ class _StockPageState extends State<StockPage> {
     _colorController.dispose();
     _coatingTypeController.dispose();
     _seriesController.dispose();
-    _minQuantityController.dispose();
+    _seriesIdController.dispose();
+    _analysesBleskController.dispose();
+    _analysesVyazkostController.dispose();
+    _analysesDeltaEController.dispose();
+    _analysesDeltaLController.dispose();
+    _analysesDeltaAController.dispose();
+    _analysesDeltaBController.dispose();
+    _minBleskController.dispose();
+    _maxBleskController.dispose();
+    _minVyazkostController.dispose();
+    _maxVyazkostController.dispose();
+    _minDeltaEController.dispose();
+    _maxDeltaEController.dispose();
+    _minDeltaLController.dispose();
+    _maxDeltaLController.dispose();
+    _minDeltaAController.dispose();
+    _maxDeltaAController.dispose();
+    _minDeltaBController.dispose();
+    _maxDeltaBController.dispose();
     super.dispose();
   }
 
@@ -52,7 +91,27 @@ class _StockPageState extends State<StockPage> {
       color: filters.color?.isEmpty ?? true ? null : filters.color,
       coatingType: filters.coatingType?.isEmpty ?? true ? null : filters.coatingType,
       series: filters.series?.isEmpty ?? true ? null : filters.series,
-      minQuantity: filters.minQuantity,
+      seriesId: filters.seriesId,
+      includePublic: filters.includePublic,
+      personalOnly: filters.personalOnly,
+      analysesBleskPri60Grad: filters.analysesBleskPri60Grad,
+      analysesUslovnayaVyazkost: filters.analysesUslovnayaVyazkost,
+      analysesDeltaE: filters.analysesDeltaE,
+      analysesDeltaL: filters.analysesDeltaL,
+      analysesDeltaA: filters.analysesDeltaA,
+      analysesDeltaB: filters.analysesDeltaB,
+      minAnalysesBleskPri60Grad: filters.minAnalysesBleskPri60Grad,
+      maxAnalysesBleskPri60Grad: filters.maxAnalysesBleskPri60Grad,
+      minAnalysesUslovnayaVyazkost: filters.minAnalysesUslovnayaVyazkost,
+      maxAnalysesUslovnayaVyazkost: filters.maxAnalysesUslovnayaVyazkost,
+      minAnalysesDeltaE: filters.minAnalysesDeltaE,
+      maxAnalysesDeltaE: filters.maxAnalysesDeltaE,
+      minAnalysesDeltaL: filters.minAnalysesDeltaL,
+      maxAnalysesDeltaL: filters.maxAnalysesDeltaL,
+      minAnalysesDeltaA: filters.minAnalysesDeltaA,
+      maxAnalysesDeltaA: filters.maxAnalysesDeltaA,
+      minAnalysesDeltaB: filters.minAnalysesDeltaB,
+      maxAnalysesDeltaB: filters.maxAnalysesDeltaB,
       limit: _pageSize,
       offset: _currentPage * _pageSize,
     );
@@ -66,9 +125,65 @@ class _StockPageState extends State<StockPage> {
           ? null
           : _coatingTypeController.text.trim(),
       series: _seriesController.text.trim().isEmpty ? null : _seriesController.text.trim(),
-      minQuantity: _minQuantityController.text.trim().isEmpty
+      seriesId: _seriesIdController.text.trim().isEmpty
           ? null
-          : double.tryParse(_minQuantityController.text.trim()),
+          : int.tryParse(_seriesIdController.text.trim()),
+      includePublic: _includePublic,
+      personalOnly: _personalOnly,
+      analysesBleskPri60Grad: _analysesBleskController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_analysesBleskController.text.trim()),
+      analysesUslovnayaVyazkost: _analysesVyazkostController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_analysesVyazkostController.text.trim()),
+      analysesDeltaE: _analysesDeltaEController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_analysesDeltaEController.text.trim()),
+      analysesDeltaL: _analysesDeltaLController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_analysesDeltaLController.text.trim()),
+      analysesDeltaA: _analysesDeltaAController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_analysesDeltaAController.text.trim()),
+      analysesDeltaB: _analysesDeltaBController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_analysesDeltaBController.text.trim()),
+      minAnalysesBleskPri60Grad: _minBleskController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_minBleskController.text.trim()),
+      maxAnalysesBleskPri60Grad: _maxBleskController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_maxBleskController.text.trim()),
+      minAnalysesUslovnayaVyazkost: _minVyazkostController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_minVyazkostController.text.trim()),
+      maxAnalysesUslovnayaVyazkost: _maxVyazkostController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_maxVyazkostController.text.trim()),
+      minAnalysesDeltaE: _minDeltaEController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_minDeltaEController.text.trim()),
+      maxAnalysesDeltaE: _maxDeltaEController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_maxDeltaEController.text.trim()),
+      minAnalysesDeltaL: _minDeltaLController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_minDeltaLController.text.trim()),
+      maxAnalysesDeltaL: _maxDeltaLController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_maxDeltaLController.text.trim()),
+      minAnalysesDeltaA: _minDeltaAController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_minDeltaAController.text.trim()),
+      maxAnalysesDeltaA: _maxDeltaAController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_maxDeltaAController.text.trim()),
+      minAnalysesDeltaB: _minDeltaBController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_minDeltaBController.text.trim()),
+      maxAnalysesDeltaB: _maxDeltaBController.text.trim().isEmpty
+          ? null
+          : double.tryParse(_maxDeltaBController.text.trim()),
     );
     setState(() {
       _currentPage = 0;
@@ -80,7 +195,29 @@ class _StockPageState extends State<StockPage> {
     _colorController.clear();
     _coatingTypeController.clear();
     _seriesController.clear();
-    _minQuantityController.clear();
+    _seriesIdController.clear();
+    _analysesBleskController.clear();
+    _analysesVyazkostController.clear();
+    _analysesDeltaEController.clear();
+    _analysesDeltaLController.clear();
+    _analysesDeltaAController.clear();
+    _analysesDeltaBController.clear();
+    _minBleskController.clear();
+    _maxBleskController.clear();
+    _minVyazkostController.clear();
+    _maxVyazkostController.clear();
+    _minDeltaEController.clear();
+    _maxDeltaEController.clear();
+    _minDeltaLController.clear();
+    _maxDeltaLController.clear();
+    _minDeltaAController.clear();
+    _maxDeltaAController.clear();
+    _minDeltaBController.clear();
+    _maxDeltaBController.clear();
+    setState(() {
+      _includePublic = true;
+      _personalOnly = false;
+    });
     context.read<StockCubit>().resetFilters();
     setState(() {
       _currentPage = 0;
@@ -126,20 +263,37 @@ class _StockPageState extends State<StockPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (state.response!.clientStocks != null &&
-                              state.response!.clientStocks!.results.isNotEmpty) ...[
-                            StockListSection(
-                              stocks: state.response!.clientStocks!.results,
-                              title:
-                                  'Остатки по моим заказам (${state.response!.clientStocks!.count})',
-                            ),
-                            const SizedBox(height: 32),
+                          if (state.response!.series.isNotEmpty) ...[
+                            Builder(
+                              builder: (context) {
+                                final clientStocks = state.response!.series
+                                    .where((s) => s.reservedForClient)
+                                    .toList();
+                                final publicStocks = state.response!.series
+                                    .where((s) => !s.reservedForClient)
+                                    .toList();
+                                
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (clientStocks.isNotEmpty) ...[
+                                      StockListSection(
+                                        stocks: clientStocks,
+                                        title: 'Остатки по моим заказам (${clientStocks.length})',
+                                      ),
+                                      const SizedBox(height: 32),
                           ],
                           StockListSection(
-                            stocks: state.response!.publicStocks.results,
-                            title: 'Свободные остатки (${state.response!.publicStocks.count})',
-                          ),
-                          if (state.response!.publicStocks.totalCount > _pageSize) ...[
+                                      stocks: publicStocks,
+                                      title: 'Свободные остатки (${publicStocks.length})',
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ] else
+                            _buildEmptyState(context, theme, isDark),
+                          if (state.response!.totalCount > _pageSize) ...[
                             const SizedBox(height: 24),
                             _buildPagination(context, theme, isDark, state),
                           ],
@@ -214,12 +368,190 @@ class _StockPageState extends State<StockPage> {
                 controller: _seriesController,
               ),
               _FilterField(
-                label: 'Мин. количество',
-                hint: '0.0',
-                icon: Icons.inventory_2_outlined,
-                controller: _minQuantityController,
+                label: 'ID серии',
+                hint: 'Точный ID серии',
+                icon: Icons.numbers_outlined,
+                controller: _seriesIdController,
                 keyboardType: TextInputType.number,
               ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, authState) {
+              if (authState.status == AuthStatus.authenticated && authState.user != null) {
+                return Wrap(
+                  spacing: 16,
+                  runSpacing: 14,
+                  children: [
+                    FilterCheckbox(
+                      label: 'Общие остатки',
+                      value: _includePublic,
+                      onChanged: (value) {
+                        setState(() {
+                          _includePublic = value ?? true;
+                        });
+                      },
+                    ),
+                    FilterCheckbox(
+                      label: 'Только персональные',
+                      value: _personalOnly,
+                      onChanged: (value) {
+                        setState(() {
+                          _personalOnly = value ?? false;
+                        });
+                      },
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          const SizedBox(height: 16),
+          ExpansionTile(
+            title: Text(
+              'Фильтры по лабораторным анализам',
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            children: [
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 16,
+                runSpacing: 14,
+                children: [
+                  _FilterField(
+                    label: 'Блеск при 60° (точное)',
+                    hint: '85.5',
+                    icon: Icons.brightness_6_outlined,
+                    controller: _analysesBleskController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Блеск при 60° (мин)',
+                    hint: '80',
+                    icon: Icons.arrow_downward_outlined,
+                    controller: _minBleskController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Блеск при 60° (макс)',
+                    hint: '90',
+                    icon: Icons.arrow_upward_outlined,
+                    controller: _maxBleskController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Условная вязкость (точное)',
+                    hint: '45.2',
+                    icon: Icons.water_drop_outlined,
+                    controller: _analysesVyazkostController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Условная вязкость (мин)',
+                    hint: '40',
+                    icon: Icons.arrow_downward_outlined,
+                    controller: _minVyazkostController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Условная вязкость (макс)',
+                    hint: '50',
+                    icon: Icons.arrow_upward_outlined,
+                    controller: _maxVyazkostController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta E (точное)',
+                    hint: '2.3',
+                    icon: Icons.colorize_outlined,
+                    controller: _analysesDeltaEController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta E (мин)',
+                    hint: '1.0',
+                    icon: Icons.arrow_downward_outlined,
+                    controller: _minDeltaEController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta E (макс)',
+                    hint: '3.0',
+                    icon: Icons.arrow_upward_outlined,
+                    controller: _maxDeltaEController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta L (точное)',
+                    hint: '1.5',
+                    icon: Icons.colorize_outlined,
+                    controller: _analysesDeltaLController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta L (мин)',
+                    hint: '0.5',
+                    icon: Icons.arrow_downward_outlined,
+                    controller: _minDeltaLController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta L (макс)',
+                    hint: '2.5',
+                    icon: Icons.arrow_upward_outlined,
+                    controller: _maxDeltaLController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta A (точное)',
+                    hint: '0.8',
+                    icon: Icons.colorize_outlined,
+                    controller: _analysesDeltaAController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta A (мин)',
+                    hint: '0.0',
+                    icon: Icons.arrow_downward_outlined,
+                    controller: _minDeltaAController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta A (макс)',
+                    hint: '1.5',
+                    icon: Icons.arrow_upward_outlined,
+                    controller: _maxDeltaAController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta B (точное)',
+                    hint: '1.2',
+                    icon: Icons.colorize_outlined,
+                    controller: _analysesDeltaBController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta B (мин)',
+                    hint: '0.0',
+                    icon: Icons.arrow_downward_outlined,
+                    controller: _minDeltaBController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  _FilterField(
+                    label: 'Delta B (макс)',
+                    hint: '2.0',
+                    icon: Icons.arrow_upward_outlined,
+                    controller: _maxDeltaBController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
             ],
           ),
           const SizedBox(height: 8),
@@ -282,7 +614,7 @@ class _StockPageState extends State<StockPage> {
     bool isDark,
     StockState state,
   ) {
-    final totalCount = state.response!.publicStocks.totalCount;
+    final totalCount = state.response!.totalCount;
     final totalPages = (totalCount / _pageSize).ceil();
 
     return PaginationControls(
@@ -306,6 +638,58 @@ class _StockPageState extends State<StockPage> {
               _loadStocks();
             }
           : null,
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, ThemeData theme, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: isDark ? ColorName.darkThemeCardBackground : ColorName.cardBackground,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? ColorName.darkThemeBorderSoft : ColorName.borderSoft,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          'Остатки не найдены',
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FilterCheckbox extends StatelessWidget {
+  const FilterCheckbox({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return CheckboxListTile(
+      title: Text(
+        label,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: isDark ? ColorName.darkThemeTextPrimary : ColorName.textPrimary,
+        ),
+      ),
+      value: value,
+      onChanged: onChanged,
+      contentPadding: EdgeInsets.zero,
+      dense: true,
     );
   }
 }
@@ -418,7 +802,7 @@ class _StockHero extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Фильтруйте по RAL, типу покрытия, серии и минимальному объёму. Быстрый доступ к остаткам по вашим заказам и свободным запасам.',
+                  'Расширенная фильтрация по RAL, типу покрытия, сериям и лабораторным анализам. Быстрый доступ к остаткам по вашим заказам и свободным запасам.',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary,
                   ),
