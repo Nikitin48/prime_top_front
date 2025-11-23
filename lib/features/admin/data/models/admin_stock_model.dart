@@ -1,3 +1,4 @@
+import 'package:prime_top_front/core/utils/xss_protection.dart';
 import 'package:prime_top_front/features/admin/domain/entities/admin_stock.dart';
 import 'package:prime_top_front/features/auth/data/models/client_model.dart';
 import 'package:prime_top_front/features/products/data/models/product_model.dart';
@@ -110,7 +111,7 @@ class AdminSeriesModel extends AdminSeries {
 
     return AdminSeriesModel(
       id: json['id'] is int ? json['id'] as int : 0,
-      name: json['name'] as String?,
+      name: XssProtection.sanitize(json['name'] as String?),
       productionDate: parseDate(json['production_date'] as String?),
       expireDate: parseDate(json['expire_date'] as String?),
       product: product,

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
+import 'package:prime_top_front/core/utils/xss_protection.dart';
 import 'package:prime_top_front/features/data_lake/application/cubit/data_lake_cubit.dart';
 import 'package:prime_top_front/features/data_lake/application/cubit/data_lake_state.dart';
 import 'package:prime_top_front/features/data_lake/presentation/widgets/data_lake_upload_result_widget.dart';
@@ -40,7 +41,7 @@ class _DataLakePageState extends State<DataLakePage> {
       final files = _fileInput!.files;
       if (files != null && files.isNotEmpty) {
         setState(() {
-          _selectedFileName = files[0].name;
+          _selectedFileName = XssProtection.validateAndSanitizeFileName(files[0].name) ?? files[0].name;
         });
       }
     });
@@ -70,9 +71,10 @@ class _DataLakePageState extends State<DataLakePage> {
     reader.onLoadEnd.listen((e) {
       final bytes = reader.result as Uint8List?;
       if (bytes != null) {
+        final sanitizedFileName = XssProtection.validateAndSanitizeFileName(file.name) ?? file.name;
         context.read<DataLakeCubit>().uploadFile(
               fileBytes: bytes,
-              fileName: file.name,
+              fileName: sanitizedFileName,
               dataType: _selectedDataType,
             );
       }
@@ -118,7 +120,7 @@ class _DataLakePageState extends State<DataLakePage> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          state.errorMessage!,
+                          XssProtection.sanitize(state.errorMessage!),
                           style: TextStyle(color: Colors.red.shade700),
                         ),
                       ),

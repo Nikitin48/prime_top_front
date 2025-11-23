@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
+import 'package:prime_top_front/core/utils/xss_protection.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
 import 'package:prime_top_front/features/cart/application/cubit/cart_cubit.dart';
 import 'package:prime_top_front/features/cart/application/cubit/cart_state.dart';
@@ -196,7 +197,7 @@ class _CartView extends StatelessWidget {
                         } else if (state.errorMessage != null && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(state.errorMessage!),
+                              content: Text(XssProtection.sanitize(state.errorMessage!)),
                               backgroundColor: ColorName.danger,
                             ),
                           );

@@ -1,3 +1,4 @@
+import 'package:prime_top_front/core/utils/xss_protection.dart';
 import 'package:prime_top_front/features/auth/domain/entities/client.dart';
 
 class ClientModel extends Client {
@@ -8,11 +9,15 @@ class ClientModel extends Client {
   });
 
   factory ClientModel.fromJson(Map<String, dynamic> json) {
-    return ClientModel(
-      id: json['id']?.toString() ?? '',
-      name: json['name'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-    );
+    try {
+      return ClientModel(
+        id: XssProtection.sanitize(json['id']?.toString()),
+        name: XssProtection.sanitize(json['name'] as String?),
+        email: XssProtection.validateAndSanitizeEmail(json['email'] as String?) ?? '',
+      );
+    } catch (e) {
+      return const ClientModel(id: '', name: '', email: '');
+    }
   }
 
   Map<String, dynamic> toJson() {

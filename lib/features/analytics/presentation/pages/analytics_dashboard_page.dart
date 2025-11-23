@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/xss_protection.dart';
 import '../../../../core/widgets/screen_wrapper.dart';
 import '../../application/cubit/analytics_cubit.dart';
 import '../widgets/top_products_widget.dart';
@@ -62,7 +63,7 @@ class _AnalyticsDashboardPageState extends State<AnalyticsDashboardPage> {
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    'Ошибка: ${state.errorMessage}',
+                    'Ошибка: ${XssProtection.sanitize(state.errorMessage)}',
                     style: const TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prime_top_front/core/gen/colors.gen.dart';
+import 'package:prime_top_front/core/utils/xss_protection.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 
 enum _AuthMode { login, register }
@@ -52,16 +53,37 @@ class _AuthDialogState extends State<AuthDialog> {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
     final auth = context.read<AuthCubit>();
+    
+    final sanitizedEmail = XssProtection.validateAndSanitizeEmail(_email.trim());
+    if (sanitizedEmail == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Некорректный email адрес')),
+      );
+      return;
+    }
+    
     if (_mode == _AuthMode.login) {
-      auth.login(email: _email.trim(), password: _password);
+      auth.login(email: sanitizedEmail, password: _password);
     } else {
+      final sanitizedFirstName = XssProtection.validateAndSanitizeName(_firstName.trim());
+      final sanitizedLastName = XssProtection.validateAndSanitizeName(_lastName.trim());
+      final sanitizedCompanyName = XssProtection.sanitize(_companyName.trim());
+      final sanitizedClientEmail = XssProtection.validateAndSanitizeEmail(_clientEmail.trim());
+      
+      if (sanitizedClientEmail == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Некорректный email компании')),
+        );
+        return;
+      }
+      
       auth.register(
-        email: _email.trim(),
+        email: sanitizedEmail,
         password: _password,
-        clientName: _companyName.trim(),
-        clientEmail: _clientEmail.trim(),
-        firstName: _firstName.trim(),
-        lastName: _lastName.trim(),
+        clientName: sanitizedCompanyName,
+        clientEmail: sanitizedClientEmail,
+        firstName: sanitizedFirstName ?? '',
+        lastName: sanitizedLastName ?? '',
       );
     }
   }
@@ -156,6 +178,9 @@ class _AuthDialogState extends State<AuthDialog> {
                             final v = (value ?? '').trim();
                             if (v.isEmpty) return 'Введите email';
                             if (!_emailRegExp.hasMatch(v)) return 'Некорректный email';
+                            if (XssProtection.containsDangerousContent(v)) {
+                              return 'Email содержит недопустимые символы';
+                            }
                             return null;
                           },
                           onSaved: (newValue) => _email = newValue ?? '',
@@ -179,6 +204,14 @@ class _AuthDialogState extends State<AuthDialog> {
                                       const SizedBox(height: 6),
                                       TextFormField(
                                         decoration: makeDecoration(),
+                                        validator: (value) {
+                                          if (_mode != _AuthMode.register) return null;
+                                          final v = (value ?? '').trim();
+                                          if (v.isNotEmpty && XssProtection.containsDangerousContent(v)) {
+                                            return 'Имя содержит недопустимые символы';
+                                          }
+                                          return null;
+                                        },
                                         onSaved: (newValue) => _firstName = newValue ?? '',
                                         enabled: !isLoading,
                                       ),
@@ -200,6 +233,14 @@ class _AuthDialogState extends State<AuthDialog> {
                                       const SizedBox(height: 6),
                                       TextFormField(
                                         decoration: makeDecoration(),
+                                        validator: (value) {
+                                          if (_mode != _AuthMode.register) return null;
+                                          final v = (value ?? '').trim();
+                                          if (v.isNotEmpty && XssProtection.containsDangerousContent(v)) {
+                                            return 'Фамилия содержит недопустимые символы';
+                                          }
+                                          return null;
+                                        },
                                         onSaved: (newValue) => _lastName = newValue ?? '',
                                         enabled: !isLoading,
                                       ),
@@ -229,6 +270,9 @@ class _AuthDialogState extends State<AuthDialog> {
                                   final v = (value ?? '').trim();
                                   if (v.isEmpty) return 'Введите название компании';
                                   if (v.length < 2) return 'Слишком короткое название';
+                                  if (XssProtection.containsDangerousContent(v)) {
+                                    return 'Название содержит недопустимые символы';
+                                  }
                                   return null;
                                 },
                                 onSaved: (newValue) => _companyName = newValue ?? '',
@@ -251,6 +295,9 @@ class _AuthDialogState extends State<AuthDialog> {
                                   final v = (value ?? '').trim();
                                   if (v.isEmpty) return 'Введите email компании';
                                   if (!_emailRegExp.hasMatch(v)) return 'Некорректный email';
+                                  if (XssProtection.containsDangerousContent(v)) {
+                                    return 'Email содержит недопустимые символы';
+                                  }
                                   return null;
                                 },
                                 onSaved: (newValue) => _clientEmail = newValue ?? '',
@@ -344,7 +391,7 @@ class _AuthDialogState extends State<AuthDialog> {
                   if (state.errorMessage != null) ...[
                     const SizedBox(height: 12),
                     Text(
-                      state.errorMessage!,
+                      XssProtection.sanitize(state.errorMessage!),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: ColorName.danger),
                     ),
                   ],

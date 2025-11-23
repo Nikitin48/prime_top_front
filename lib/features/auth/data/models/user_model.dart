@@ -1,3 +1,4 @@
+import 'package:prime_top_front/core/utils/xss_protection.dart';
 import 'package:prime_top_front/features/auth/domain/entities/user.dart';
 
 import 'client_model.dart';
@@ -33,19 +34,37 @@ class UserModel extends User {
       }
     }
     
-    return UserModel(
-      id: json['id']?.toString() ?? '',
-      email: json['email'] as String? ?? '',
-      client: ClientModel.fromJson(
-        json['client'] as Map<String, dynamic>? ?? {},
-      ),
-      firstName: json['first_name'] as String?,
-      lastName: json['last_name'] as String?,
-      createdAt: json['created_at'] as String?,
-      token: json['token'] as String?,
-      expiresIn: json['expires_in'] as int?,
-      isAdmin: isAdminValue,
-    );
+    try {
+      ClientModel client;
+      if (json.containsKey('client') && json['client'] != null) {
+        if (json['client'] is Map<String, dynamic>) {
+          client = ClientModel.fromJson(json['client'] as Map<String, dynamic>);
+        } else {
+          client = const ClientModel(id: '', name: '', email: '');
+        }
+      } else {
+        client = const ClientModel(id: '', name: '', email: '');
+      }
+      
+      return UserModel(
+        id: XssProtection.sanitize(json['id']?.toString()),
+        email: XssProtection.validateAndSanitizeEmail(json['email'] as String?) ?? '',
+        client: client,
+        firstName: XssProtection.validateAndSanitizeName(json['first_name'] as String?),
+        lastName: XssProtection.validateAndSanitizeName(json['last_name'] as String?),
+        createdAt: json['created_at'] as String?,
+        token: json['token'] as String?,
+        expiresIn: json['expires_in'] is int ? json['expires_in'] as int? : null,
+        isAdmin: isAdminValue,
+      );
+    } catch (e) {
+      return UserModel(
+        id: '',
+        email: '',
+        client: const ClientModel(id: '', name: '', email: ''),
+        isAdmin: false,
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {
