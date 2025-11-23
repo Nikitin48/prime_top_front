@@ -59,26 +59,34 @@ class HomeHeroSection extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  Wrap(
-                    spacing: 16,
-                    runSpacing: 12,
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(
-                            color: Colors.white,
-                            width: 1.2,
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, authState) {
+                      final isAdmin = authState.status == AuthStatus.authenticated && authState.user?.isAdmin == true;
+                      if (isAdmin) {
+                        return const SizedBox.shrink();
+                      }
+                      return Wrap(
+                        spacing: 16,
+                        runSpacing: 12,
+                        children: [
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(
+                                color: Colors.white,
+                                width: 1.2,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 16,
+                              ),
+                            ),
+                            onPressed: () => _handleMakeOrder(context, authState),
+                            child: const Text('Сделать заказ'),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
-                          ),
-                        ),
-                        onPressed: () => _openAuthOrOrders(context),
-                        child: const Text('Сделать заказ'),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ],
               );
@@ -136,10 +144,9 @@ class HomeHeroSection extends StatelessWidget {
     );
   }
 
-  void _openAuthOrOrders(BuildContext context) {
-    final authState = context.read<AuthCubit>().state;
+  void _handleMakeOrder(BuildContext context, AuthState authState) {
     if (authState.status == AuthStatus.authenticated) {
-      context.goNamed('orders');
+      context.goNamed('stock');
     } else {
       showDialog<void>(
         context: context,
