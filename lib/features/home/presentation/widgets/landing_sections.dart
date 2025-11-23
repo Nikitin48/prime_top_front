@@ -10,15 +10,28 @@ class HomeHeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 600;
+    final isTablet = screenWidth >= 600 && screenWidth < 900;
+    
+    final List<double> gradientStops;
+    if (isMobile) {
+      gradientStops = [0.0, 0.22];
+    } else if (isTablet) {
+      gradientStops = [0.0, 0.45];
+    } else {
+      gradientStops = [0.0, 0.88];
+    }
+    
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 96),
-      decoration: const BoxDecoration(
-        gradient:LinearGradient(
-    colors: [ColorName.primary, ColorName.secondary],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    stops: [0.0, 0.88],
-  ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [ColorName.primary, ColorName.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: gradientStops,
+        ),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(56)),
       ),
       child: Center(
