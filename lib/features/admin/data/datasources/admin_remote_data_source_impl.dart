@@ -238,6 +238,9 @@ class _AdminApiClient extends ApiClient {
   final String _baseUrl;
   final String? Function() _getAuthToken;
 
+  String get baseUrl => _baseUrl;
+  String? getAuthToken() => _getAuthToken();
+
   @override
   Future<Map<String, dynamic>> get(
     String url, {

@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:prime_top_front/core/config/api_config.dart';
+import 'package:prime_top_front/core/gen/colors.gen.dart';
 import 'package:prime_top_front/core/network/network_client.dart';
 import 'package:prime_top_front/core/widgets/screen_wrapper.dart';
+import 'package:prime_top_front/features/data_lake/application/cubit/data_lake_cubit.dart';
+import 'package:prime_top_front/features/data_lake/data/data_lake_repository_impl.dart';
+import 'package:prime_top_front/features/data_lake/data/datasources/data_lake_remote_data_source_impl.dart';
+import 'package:prime_top_front/features/data_lake/presentation/pages/data_lake_page.dart';
 import 'package:prime_top_front/features/auth/application/cubit/auth_cubit.dart';
 import 'package:prime_top_front/features/profile/application/cubit/team_members_cubit.dart';
 import 'package:prime_top_front/features/profile/application/cubit/team_members_state.dart';
@@ -26,6 +31,8 @@ class ClientProfilePage extends StatefulWidget {
 
 class _ClientProfilePageState extends State<ClientProfilePage> {
   late final TeamMembersCubit _teamCubit;
+  late final DataLakeCubit _dataLakeCubit;
+  bool _showDataLake = false;
 
   String _formatDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) return '-';
@@ -42,13 +49,24 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
     super.initState();
     final authCubit = context.read<AuthCubit>();
     final networkClient = HttpClient(baseUrl: ApiConfig.baseUrl);
-    final dataSource = TeamRemoteDataSourceImpl(
+    
+    // Инициализация TeamMembersCubit
+    final teamDataSource = TeamRemoteDataSourceImpl(
       networkClient: networkClient,
       baseUrl: ApiConfig.baseUrl,
       getAuthToken: () => authCubit.state.user?.token,
     );
-    final repository = TeamRepositoryImpl(dataSource);
-    _teamCubit = TeamMembersCubit(repository);
+    final teamRepository = TeamRepositoryImpl(teamDataSource);
+    _teamCubit = TeamMembersCubit(teamRepository);
+
+    // Инициализация DataLakeCubit
+    final dataLakeDataSource = DataLakeRemoteDataSourceImpl(
+      networkClient: networkClient,
+      baseUrl: ApiConfig.baseUrl,
+      getAuthToken: () => authCubit.state.user?.token,
+    );
+    final dataLakeRepository = DataLakeRepositoryImpl(dataLakeDataSource);
+    _dataLakeCubit = DataLakeCubit(dataLakeRepository);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = authCubit.state.user;
@@ -61,6 +79,7 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
   @override
   void dispose() {
     _teamCubit.close();
+    _dataLakeCubit.close();
     super.dispose();
   }
 
@@ -75,73 +94,139 @@ class _ClientProfilePageState extends State<ClientProfilePage> {
           }
 
           final user = authState.user!;
+          final isAdmin = user.isAdmin;
 
-          return BlocProvider.value(
-            value: _teamCubit,
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1100),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isWide = constraints.maxWidth > 900;
-                    final cardWidth = isWide ? (constraints.maxWidth - 24) / 2 : constraints.maxWidth;
-                    return Column(
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: _teamCubit),
+              BlocProvider.value(value: _dataLakeCubit),
+            ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1200),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const ProfileHeader(),
-                        const SizedBox(height: 24),
-                        Wrap(
-                          spacing: 24,
-                          runSpacing: 24,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: cardWidth,
-                              child: UserInfoCard(
-                                user: user,
-                                formatDate: _formatDate,
-                              ),
+                            Expanded(
+                              child: const ProfileHeader(),
                             ),
-                            SizedBox(
-                              width: cardWidth,
-                              child: ClientInfoCard(
-                                client: user.client,
+                            if (isAdmin) ...[
+                              const SizedBox(width: 16),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    _showDataLake = !_showDataLake;
+                                  });
+                                },
+                                icon: Icon(_showDataLake ? Icons.person : Icons.storage),
+                                label: Text(_showDataLake ? 'Профиль' : 'Data Lake'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                      ? ColorName.darkThemePrimary
+                                      : ColorName.primary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 24),
-                        BlocBuilder<TeamMembersCubit, TeamMembersState>(
-                          builder: (context, teamState) {
-                            if (teamState.isLoading) {
-                              return const Center(child: CircularProgressIndicator());
-                            }
-                            final members = teamState.members.isNotEmpty
-                                ? teamState.members
-                                : [
-                                    TeamMember(
-                                      id: user.id,
-                                      email: user.email,
-                                      createdAt: user.createdAt,
-                                    ),
-                                  ];
-                            return TeamMembersCard(
-                              members: members,
-                              currentUserId: user.id,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 32),
-                        const LogoutButton(),
+                        _showDataLake && isAdmin
+                            ? const DataLakePage()
+                            : _buildProfileTab(user),
                       ],
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  ),
+                );
+              },
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildProfileTab(user) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 900;
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              isWide
+                  ? IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: UserInfoCard(
+                              user: user,
+                              formatDate: _formatDate,
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: ClientInfoCard(
+                              client: user.client,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Column(
+                      children: [
+                        UserInfoCard(
+                          user: user,
+                          formatDate: _formatDate,
+                        ),
+                        const SizedBox(height: 24),
+                        ClientInfoCard(
+                          client: user.client,
+                        ),
+                      ],
+                    ),
+              const SizedBox(height: 24),
+              BlocBuilder<TeamMembersCubit, TeamMembersState>(
+                builder: (context, teamState) {
+                  if (teamState.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final members = teamState.members.isNotEmpty
+                      ? teamState.members
+                      : [
+                          TeamMember(
+                            id: user.id,
+                            email: user.email,
+                            createdAt: user.createdAt,
+                          ),
+                        ];
+                  return TeamMembersCard(
+                    members: members,
+                    currentUserId: user.id,
+                  );
+                },
+              ),
+              const SizedBox(height: 32),
+              const LogoutButton(),
+            ],
+          ),
+        );
+      },
     );
   }
 }
