@@ -9,80 +9,95 @@ class RalColorHelper {
   }
 
   static Color getRalColor(int ralCode) {
-    final colorMap = _ralColorMap[ralCode];
-    if (colorMap != null) {
-      return colorMap;
+    final color = _ralColorMap[ralCode];
+    if (color != null) {
+      return color;
     }
     return _generateApproximateColor(ralCode);
   }
 
   static Color _generateApproximateColor(int ralCode) {
-    final code = ralCode.toString().padLeft(4, '0');
-    if (code.length < 4) {
+    if (ralCode < 1000 || ralCode > 9999) {
       return Colors.grey;
     }
 
+    final code = ralCode.toString().padLeft(4, '0');
     final firstDigit = int.tryParse(code[0]) ?? 0;
-    final remaining = int.tryParse(code.substring(1)) ?? 0;
+    
+    final groupStart = firstDigit * 1000;
+    final groupEnd = groupStart + 999;
+    
+    Color? lowerColor;
+    Color? upperColor;
+    int? lowerCode;
+    int? upperCode;
+    
+    for (int code = ralCode - 1; code >= groupStart; code--) {
+      if (_ralColorMap.containsKey(code)) {
+        lowerColor = _ralColorMap[code];
+        lowerCode = code;
+        break;
+      }
+    }
+    
+    for (int code = ralCode + 1; code <= groupEnd; code++) {
+      if (_ralColorMap.containsKey(code)) {
+        upperColor = _ralColorMap[code];
+        upperCode = code;
+        break;
+      }
+    }
+    
+    if (lowerColor != null && upperColor != null && lowerCode != null && upperCode != null) {
+      final totalRange = upperCode - lowerCode;
+      final position = ralCode - lowerCode;
+      final t = position / totalRange;
+      return Color.lerp(lowerColor, upperColor, t) ?? lowerColor;
+    }
+    
+    if (lowerColor != null) {
+      return _adjustColorForGroup(lowerColor, firstDigit, ralCode - (lowerCode ?? ralCode));
+    }
+    if (upperColor != null) {
+      return _adjustColorForGroup(upperColor, firstDigit, ralCode - (upperCode ?? ralCode));
+    }
+    
+    return _getBaseColorForGroup(firstDigit);
+  }
 
-    int r, g, b;
-
+  static Color _getBaseColorForGroup(int firstDigit) {
     switch (firstDigit) {
       case 1:
-        r = 200 + (remaining % 55);
-        g = 180 + (remaining % 40);
-        b = 100 + (remaining % 60);
-        break;
+        return const Color(0xFFE6C200);
       case 2:
-        r = 255 - (remaining % 100);
-        g = 200 + (remaining % 55);
-        b = 0 + (remaining % 100);
-        break;
+        return const Color(0xFFE55137);
       case 3:
-        r = 0 + (remaining % 100);
-        g = 200 + (remaining % 55);
-        b = 0 + (remaining % 100);
-        break;
+        return const Color(0xFF9B2423);
       case 4:
-        r = 0 + (remaining % 100);
-        g = 150 + (remaining % 105);
-        b = 200 + (remaining % 55);
-        break;
+        return const Color(0xFF6C4675);
       case 5:
-        r = 100 + (remaining % 100);
-        g = 100 + (remaining % 100);
-        b = 200 + (remaining % 55);
-        break;
+        return const Color(0xFF005387);
       case 6:
-        r = 200 + (remaining % 55);
-        g = 100 + (remaining % 100);
-        b = 200 + (remaining % 55);
-        break;
+        return const Color(0xFF287233);
       case 7:
-        r = 100 + (remaining % 100);
-        g = 100 + (remaining % 100);
-        b = 100 + (remaining % 100);
-        break;
+        return const Color(0xFF6C7059);
       case 8:
-        r = 150 + (remaining % 105);
-        g = 150 + (remaining % 105);
-        b = 150 + (remaining % 105);
-        break;
+        return const Color(0xFF734222);
       case 9:
-        r = 50 + (remaining % 100);
-        g = 50 + (remaining % 100);
-        b = 50 + (remaining % 100);
-        break;
+        return const Color(0xFFA5A5A5);
       default:
-        r = 128;
-        g = 128;
-        b = 128;
+        return Colors.grey;
     }
+  }
 
+  static Color _adjustColorForGroup(Color baseColor, int group, int offset) {
+    final adjustment = (offset.abs() % 50) / 50.0 * 0.1;
+    final factor = offset > 0 ? 1.0 + adjustment : 1.0 - adjustment;
+    
     return Color.fromRGBO(
-      r.clamp(0, 255),
-      g.clamp(0, 255),
-      b.clamp(0, 255),
+      ((baseColor.r * 255.0) * factor).round().clamp(0, 255),
+      ((baseColor.g * 255.0) * factor).round().clamp(0, 255),
+      ((baseColor.b * 255.0) * factor).round().clamp(0, 255),
       1.0,
     );
   }

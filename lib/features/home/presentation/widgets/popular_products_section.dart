@@ -44,7 +44,7 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
 
         return Container(
           padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 16 : 32,
+            horizontal: isMobile ? 16 : 80,
             vertical: isMobile ? 16 : 32,
           ).copyWith(top: isMobile ? 32 : 64),
           child: ConstrainedBox(
@@ -65,7 +65,7 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
 
   Widget _buildSectionHeader(BuildContext context, ThemeData theme, bool isMobile) {
     return Padding(
-      padding: EdgeInsets.only(left: isMobile ? 0 : 50),
+      padding: EdgeInsets.only(left: isMobile ? 0 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -89,12 +89,13 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
   ) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 32,
+        horizontal: isMobile ? 16 : 80,
         vertical: isMobile ? 16 : 32,
       ).copyWith(top: isMobile ? 32 : 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionHeader(context, theme, isMobile),
             SizedBox(height: isMobile ? 16 : 32),
@@ -119,12 +120,13 @@ class _PopularProductsSectionState extends State<PopularProductsSection> {
   ) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 16 : 32,
+        horizontal: isMobile ? 16 : 80,
         vertical: isMobile ? 16 : 32,
       ).copyWith(top: isMobile ? 32 : 64),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1400),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionHeader(context, theme, isMobile),
             SizedBox(height: isMobile ? 16 : 32),
@@ -267,8 +269,7 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
         final cardsPerRow = _getCardsPerRow(screenWidth);
-        final horizontalPadding = _showLeftButton || _showRightButton ? 48.0 : 0.0;
-        final availableWidth = constraints.maxWidth - horizontalPadding;
+        final availableWidth = constraints.maxWidth;
         
         final spacing = screenWidth < 600 ? 12.0 : screenWidth < 900 ? 16.0 : 20.0;
         final totalSpacing = spacing * (cardsPerRow - 1);
@@ -295,27 +296,11 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
           });
         }
         
-        final isMobile = screenWidth < 600;
-        final adjustedHorizontalPadding = isMobile ? 0.0 : horizontalPadding;
-        
         return Stack(
           children: [
-            if (_showLeftButton)
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: _ScrollButton(
-                  icon: Icons.chevron_left,
-                  onPressed: _scrollLeft,
-                  isDark: isDark,
-                ),
-              ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: adjustedHorizontalPadding),
-              child: SizedBox(
-                height: cardHeight,
-                child: ListView.builder(
+            SizedBox(
+              height: cardHeight,
+              child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
                   physics: const NeverScrollableScrollPhysics(),
@@ -345,7 +330,17 @@ class _ProductsScrollSectionState extends State<_ProductsScrollSection> {
                   },
                 ),
               ),
-            ),
+            if (_showLeftButton)
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: _ScrollButton(
+                  icon: Icons.chevron_left,
+                  onPressed: _scrollLeft,
+                  isDark: isDark,
+                ),
+              ),
             if (_showRightButton)
               Positioned(
                 right: 0,
