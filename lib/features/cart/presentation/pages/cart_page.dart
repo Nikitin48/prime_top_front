@@ -190,7 +190,7 @@ class _CartView extends StatelessWidget {
                       totalPrice: cart.totalPrice,
                       totalQuantity: cart.totalQuantity,
                       onCheckout: () async {
-                        final orderId = await context.read<CartCubit>().checkout();
+                        final orderId = await context.read<CartCubit>().checkout(status: 'Создан');
                         if (orderId != null && context.mounted) {
                           context.goNamed('order_detail', pathParameters: {'orderId': orderId.toString()});
                         } else if (state.errorMessage != null && context.mounted) {

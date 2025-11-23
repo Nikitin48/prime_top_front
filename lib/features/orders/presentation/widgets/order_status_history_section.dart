@@ -16,18 +16,31 @@ class OrderStatusHistorySection extends StatelessWidget {
   }
 
   String _getStatusText(String status) {
-    switch (status) {
+    final normalized = status.toLowerCase();
+    switch (normalized) {
       case 'created':
+      case 'создан':
         return 'Создан';
       case 'pending':
+      case 'в ожидании':
+      case 'ожидает подтверждения':
         return 'В ожидании';
       case 'processing':
+      case 'в обработке':
+      case 'в производстве':
         return 'В обработке';
       case 'shipped':
+      case 'отгружен':
+      case 'отправлен':
         return 'Отправлен';
       case 'delivered':
+      case 'доставлен':
+      case 'доставлено':
         return 'Доставлен';
       case 'cancelled':
+      case 'отменён':
+      case 'отменен':
+      case 'отменено':
         return 'Отменен';
       default:
         return status;

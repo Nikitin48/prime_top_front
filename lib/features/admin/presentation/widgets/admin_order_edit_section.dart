@@ -34,28 +34,48 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
   }
 
   String? _normalizeStatus(String status) {
-    const englishKeys = ['created', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-    if (englishKeys.contains(status.toLowerCase())) {
-      return status.toLowerCase();
+    // Нормализуем статус к русскому варианту
+    const russianStatuses = ['Создан', 'В ожидании', 'В обработке', 'Отгружен', 'Доставлен', 'Отменён'];
+    const englishToRussian = {
+      'created': 'Создан',
+      'pending': 'В ожидании',
+      'processing': 'В обработке',
+      'shipped': 'Отгружен',
+      'delivered': 'Доставлен',
+      'cancelled': 'Отменён',
+    };
+
+    final normalized = status.toLowerCase();
+    
+    // Если это английский статус, конвертируем в русский
+    if (englishToRussian.containsKey(normalized)) {
+      return englishToRussian[normalized];
     }
 
-    switch (status.toLowerCase()) {
+    // Если это уже русский статус, нормализуем его
+    switch (normalized) {
       case 'создан':
-        return 'created';
+        return 'Создан';
+      case 'в ожидании':
       case 'ожидает подтверждения':
-        return 'pending';
+        return 'В ожидании';
+      case 'в обработке':
       case 'в производстве':
-        return 'processing';
+        return 'В обработке';
       case 'отгружен':
-        return 'shipped';
+        return 'Отгружен';
       case 'доставлен':
       case 'доставлено':
-        return 'delivered';
+        return 'Доставлен';
       case 'отменён':
       case 'отменен':
       case 'отменено':
-        return 'cancelled';
+        return 'Отменён';
       default:
+        // Если статус уже в правильном формате, возвращаем как есть
+        if (russianStatuses.contains(status)) {
+          return status;
+        }
         return null;
     }
   }
@@ -85,7 +105,7 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
       if (_selectedDeliveredDate != null) {
         deliveredAt = DateFormat('yyyy-MM-dd').format(_selectedDeliveredDate!);
       }
-      if (_selectedStatus == 'cancelled' && _cancelReasonController.text.trim().isNotEmpty) {
+      if (_selectedStatus == 'Отменён' && _cancelReasonController.text.trim().isNotEmpty) {
         cancelReason = _cancelReasonController.text.trim();
       }
 
@@ -193,12 +213,12 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
                   : ColorName.backgroundSecondary,
             ),
             items: const [
-              DropdownMenuItem(value: 'created', child: Text('Создан')),
-              DropdownMenuItem(value: 'pending', child: Text('Ожидает подтверждения')),
-              DropdownMenuItem(value: 'processing', child: Text('В производстве')),
-              DropdownMenuItem(value: 'shipped', child: Text('Отгружен')),
-              DropdownMenuItem(value: 'delivered', child: Text('Доставлен')),
-              DropdownMenuItem(value: 'cancelled', child: Text('Отменён')),
+              DropdownMenuItem(value: 'Создан', child: Text('Создан')),
+              DropdownMenuItem(value: 'В ожидании', child: Text('В ожидании')),
+              DropdownMenuItem(value: 'В обработке', child: Text('В обработке')),
+              DropdownMenuItem(value: 'Отгружен', child: Text('Отгружен')),
+              DropdownMenuItem(value: 'Доставлен', child: Text('Доставлен')),
+              DropdownMenuItem(value: 'Отменён', child: Text('Отменён')),
             ],
             onChanged: (value) {
               setState(() {
@@ -234,7 +254,7 @@ class _AdminOrderEditSectionState extends State<AdminOrderEditSection> {
               ),
             ],
           ),
-          if (_selectedStatus == 'cancelled') ...[
+          if (_selectedStatus == 'Отменён') ...[
             const SizedBox(height: 16),
             TextField(
               controller: _cancelReasonController,

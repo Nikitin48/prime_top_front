@@ -28,18 +28,30 @@ class OrderCard extends StatelessWidget {
   }
 
   String _getStatusText(String status) {
-    switch (status) {
+    final normalized = status.toLowerCase();
+    switch (normalized) {
       case 'created':
+      case 'создан':
         return 'Создан';
       case 'pending':
+      case 'в ожидании':
+      case 'ожидает подтверждения':
         return 'Ожидает подтверждения';
       case 'processing':
+      case 'в обработке':
+      case 'в производстве':
         return 'В производстве';
       case 'shipped':
+      case 'отгружен':
         return 'Отгружен';
       case 'delivered':
+      case 'доставлен':
+      case 'доставлено':
         return 'Доставлен';
       case 'cancelled':
+      case 'отменён':
+      case 'отменен':
+      case 'отменено':
         return 'Отменён';
       default:
         return status;
@@ -47,22 +59,69 @@ class OrderCard extends StatelessWidget {
   }
 
   Color _getStatusColor(String status, bool isDark) {
-    switch (status) {
+    final normalized = status.toLowerCase();
+    switch (normalized) {
       case 'created':
+      case 'создан':
         return isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary;
       case 'pending':
+      case 'в ожидании':
+      case 'ожидает подтверждения':
         return ColorName.warning;
       case 'processing':
+      case 'в обработке':
+      case 'в производстве':
         return ColorName.primary;
       case 'shipped':
+      case 'отгружен':
         return ColorName.secondary;
       case 'delivered':
+      case 'доставлен':
+      case 'доставлено':
         return ColorName.success;
       case 'cancelled':
+      case 'отменён':
+      case 'отменен':
+      case 'отменено':
         return ColorName.danger;
       default:
         return isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary;
     }
+  }
+
+  int _getStatusIndex(String status) {
+    final normalized = status.toLowerCase();
+    // Нормализуем статус к английскому для поиска в массиве
+    String normalizedStatus;
+    switch (normalized) {
+      case 'created':
+      case 'создан':
+        normalizedStatus = 'created';
+        break;
+      case 'pending':
+      case 'в ожидании':
+      case 'ожидает подтверждения':
+        normalizedStatus = 'pending';
+        break;
+      case 'processing':
+      case 'в обработке':
+      case 'в производстве':
+        normalizedStatus = 'processing';
+        break;
+      case 'shipped':
+      case 'отгружен':
+        normalizedStatus = 'shipped';
+        break;
+      case 'delivered':
+      case 'доставлен':
+      case 'доставлено':
+        normalizedStatus = 'delivered';
+        break;
+      default:
+        normalizedStatus = normalized;
+    }
+    final progressSteps = const ['created', 'pending', 'processing', 'shipped', 'delivered'];
+    return progressSteps.indexOf(normalizedStatus).clamp(0, progressSteps.length - 1);
   }
 
   int _calculateTotalAmount() {
@@ -79,7 +138,7 @@ class OrderCard extends StatelessWidget {
     final statusColor = _getStatusColor(order.status, isDark);
     final totalAmount = _formatCurrency(_calculateTotalAmount());
     final progressSteps = const ['created', 'pending', 'processing', 'shipped', 'delivered'];
-    final currentStep = progressSteps.indexOf(order.status).clamp(0, progressSteps.length - 1);
+    final currentStep = _getStatusIndex(order.status);
     final clientBadge = order.client;
     final colorMarkers = order.items
         .map((e) => e.product.colorCode)

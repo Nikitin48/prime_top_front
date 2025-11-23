@@ -17,18 +17,31 @@ class OrderInfoSection extends StatelessWidget {
   }
 
   String _getStatusText(String status) {
-    switch (status) {
+    final normalized = status.toLowerCase();
+    switch (normalized) {
       case 'created':
+      case 'создан':
         return 'Создан';
       case 'pending':
+      case 'в ожидании':
+      case 'ожидает подтверждения':
         return 'В ожидании';
       case 'processing':
+      case 'в обработке':
+      case 'в производстве':
         return 'В обработке';
       case 'shipped':
+      case 'отгружен':
+      case 'отправлен':
         return 'Отправлен';
       case 'delivered':
+      case 'доставлен':
+      case 'доставлено':
         return 'Доставлен';
       case 'cancelled':
+      case 'отменён':
+      case 'отменен':
+      case 'отменено':
         return 'Отменен';
       default:
         return status;
@@ -36,18 +49,31 @@ class OrderInfoSection extends StatelessWidget {
   }
 
   Color _getStatusColor(String status, bool isDark) {
-    switch (status) {
+    final normalized = status.toLowerCase();
+    switch (normalized) {
       case 'created':
+      case 'создан':
         return isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary;
       case 'pending':
+      case 'в ожидании':
+      case 'ожидает подтверждения':
         return ColorName.warning;
       case 'processing':
+      case 'в обработке':
+      case 'в производстве':
         return ColorName.primary;
       case 'shipped':
+      case 'отгружен':
+      case 'отправлен':
         return ColorName.secondary;
       case 'delivered':
+      case 'доставлен':
+      case 'доставлено':
         return ColorName.success;
       case 'cancelled':
+      case 'отменён':
+      case 'отменен':
+      case 'отменено':
         return ColorName.danger;
       default:
         return isDark ? ColorName.darkThemeTextSecondary : ColorName.textSecondary;
