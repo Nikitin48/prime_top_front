@@ -37,8 +37,49 @@ import 'package:prime_top_front/features/admin/data/datasources/admin_remote_dat
 import 'package:prime_top_front/features/analytics/application/cubit/analytics_cubit.dart';
 import 'package:prime_top_front/features/analytics/data/analytics_repository_impl.dart';
 import 'package:prime_top_front/features/analytics/data/datasources/analytics_remote_data_source_impl.dart';
+import 'dart:ui' as ui;
+import 'package:flutter/foundation.dart';
 
 void main() {
+  if (kIsWeb) {
+    final originalOnError = FlutterError.onError;
+    
+    FlutterError.onError = (FlutterErrorDetails details) {
+      final errorMessage = details.exception.toString();
+      final stackTrace = details.stack?.toString() ?? '';
+      
+      if (errorMessage.contains('KeyUpEvent') ||
+          errorMessage.contains('HardwareKeyboard') ||
+          errorMessage.contains('physical key is pressed') ||
+          errorMessage.contains('_pressedKeys[event.physicalKey]') ||
+          errorMessage.contains('physical key is pressed on a different logical key') ||
+          stackTrace.contains('hardware_keyboard.dart')) {
+        return;
+      }
+      
+      if (originalOnError != null) {
+        originalOnError(details);
+      } else {
+        FlutterError.presentError(details);
+      }
+    };
+    
+    ui.PlatformDispatcher.instance.onError = (error, stack) {
+      final errorMessage = error.toString();
+      final stackTrace = stack.toString();
+      
+      if (errorMessage.contains('KeyUpEvent') ||
+          errorMessage.contains('HardwareKeyboard') ||
+          errorMessage.contains('physical key is pressed') ||
+          errorMessage.contains('_pressedKeys[event.physicalKey]') ||
+          errorMessage.contains('physical key is pressed on a different logical key') ||
+          stackTrace.contains('hardware_keyboard.dart')) {
+        return true;
+      }
+      return false;
+    };
+  }
+  
   runApp(const App());
 }
 
