@@ -60,6 +60,13 @@ class AppBottomNavigationBar extends StatelessWidget {
                   isActive: location == '/admin/stocks' || location.startsWith('/admin/stocks/'),
                   onTap: () => context.goNamed('admin_stocks'),
                 ),
+                _BottomNavItem(
+                  icon: Icons.analytics_outlined,
+                  activeIcon: Icons.analytics,
+                  label: 'Анализы',
+                  isActive: location == '/admin/analytics' || location.startsWith('/admin/analytics/'),
+                  onTap: () => context.goNamed('analytics'),
+                ),
               ] else if (isAuthenticated) ...[
                 _BottomNavItem(
                   icon: Icons.shopping_cart_outlined,
